@@ -7,8 +7,8 @@
 
 /*!
 @brief The Main entry point function for the wrapper program.
-@parameter [in] argc - Number of input arguments
-@parameter [in] argv - Values of input arguments.
+@param [in] argc - Number of input arguments
+@param [in] argv - Values of input arguments.
 @returns 0 If the program terminates successfully, otherwise 1 to indicate
          an error.
 */

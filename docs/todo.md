@@ -5,7 +5,7 @@
 
 ## Documentation
 
-- [ ] Set up Doxygen on the C Source code.
+- [X] Set up Doxygen on the C Source code.
 - [ ] Write up the basics behind the AC-3 Algorithm
 - [ ] Write up the architecture of this implementation.
 - [ ] Document the build system.
@@ -23,4 +23,4 @@
 
 ## Infrastructure
 
-- [ ] C code compilation flow.
+- [X] C code compilation flow.

@@ -8,6 +8,9 @@ setup:
 clean:
 	rm -rf ./build/*
 
+code-docs:
+	doxygen doxyfile
+
 project-docs:
 	mkdocs build --clean --site-dir ./build/docs
 
