@@ -1,0 +1,18 @@
+site_name: sat-solver
+
+site_author: Ben Marshall
+
+theme: readthedocs
+
+repo_name: https://github.com/ben-marshall/sat-solver
+
+markdown_extensions:
+- smarty
+- sane_lists
+- footnotes
+
+pages:
+- Overview: overview.md
+- Todo List: todo.md
+
+
