@@ -157,6 +157,7 @@ sat_imp_matrix_cell * sat_get_imp_matrix_cell(
 );
 
 
+
 /*!
 @brief Modifies the implication relationships of a cell.
 @param [inout] cell   - The cell to modify.

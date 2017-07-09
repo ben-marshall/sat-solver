@@ -2,12 +2,24 @@ cmake_minimum_required(VERSION 3.5)
 
 project(sat-solver)
 
+FIND_PACKAGE(BISON 3.0.4 REQUIRED)
+FIND_PACKAGE(FLEX 2.5.35 REQUIRED)
+
 enable_testing()
 
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
 set(LIBRARY_NAME    satsolver)
 set(EXECUTABLE_NAME sats)
+
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+set(FLEX_INPUT   sat_expression_scanner.l)
+set(FLEX_OUTPUT  sat_expression_scanner.c)
+
+set(BISON_INPUT  sat_expression_parser.y)
+set(BISON_OUTPUT sat_expression_parser.tab.c)
 
 # ------------------------------------------------------------------------
 
@@ -34,13 +46,17 @@ message(STATUS "NOT building with coverage.")
 endif()
 
 
-SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall")
 SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
 message(STATUS "Parser Build Flags Debug:   ${CMAKE_C_FLAGS_DEBUG}")
 message(STATUS "Parser Link Flags Debug:   ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 message(STATUS "Parser Build Flags Release: ${CMAKE_C_FLAGS_RELEASE}")
 message(STATUS "Parser Link Flags Release: ${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+# ------------------------------------------------------------------------
+
+SET_SOURCE_FILES_PROPERTIES(${BINARY_DIR}/${FLEX_OUTPUT}  GENERATED)
+SET_SOURCE_FILES_PROPERTIES(${BINARY_DIR}/${BISON_OUTPUT} GENERATED)
 
 # ------------------------------------------------------------------------
 
