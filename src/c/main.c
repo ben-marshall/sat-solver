@@ -39,6 +39,10 @@ int main (int argc, char ** argv)
     yyparse();
     printf("[DONE]\n");
 
+    if(yy_expressions == NULL) {
+        printf("No Expressions were parsed.\n");
+        return 0;
+    }
 
     // How many variables will our expression contain?
     unsigned int vcount = atoi(argv[1]);
