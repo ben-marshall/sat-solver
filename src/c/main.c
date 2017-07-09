@@ -47,16 +47,16 @@ void add_expressions(
         switch(walker -> op) {
             case (OP_AND):
                 printf("%d = %d & %d\n",c,a,b);
-                as_l -> a_imp_b   = 1;
-                as_r -> a_imp_b   = 1;
-                r_as -> na_imp_nb = 1;
-                l_as -> na_imp_nb = 1;
+                as_l -> a_imp_b   = BITOP_SET;
+                as_r -> a_imp_b   = BITOP_SET;
+                r_as -> na_imp_nb = BITOP_SET;
+                l_as -> na_imp_nb = BITOP_SET;
                 break;
 
             case (OP_OR ):
                 printf("%d = %d | %d\n",c,a,b);
-                r_as -> a_imp_b = 1;
-                l_as -> a_imp_b = 1;
+                r_as -> a_imp_b = BITOP_SET;
+                l_as -> a_imp_b = BITOP_SET;
                 break;
 
             case (OP_XOR):
@@ -69,10 +69,10 @@ void add_expressions(
 
             case (OP_NOT):
                 printf("%d = ~%d\n",c,b);
-                r_as -> a_imp_nb = 1;
-                r_as -> na_imp_b = 1;
-                as_r -> a_imp_nb = 1;
-                as_r -> na_imp_b = 1;
+                r_as -> a_imp_nb = BITOP_SET;
+                r_as -> na_imp_b = BITOP_SET;
+                as_r -> a_imp_nb = BITOP_SET;
+                as_r -> na_imp_b = BITOP_SET;
                 break;
         }
 
