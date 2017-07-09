@@ -5,6 +5,10 @@
 %{
 
 #include <stdio.h>
+#include <math.h>
+
+#include "sat-expression.h"
+
 #define YYERROR_VERBOSE 1
 
 %}
@@ -25,6 +29,11 @@
 %left TOK_OP_AND TOK_OP_OR TOK_OP_XOR TOK_OP_EQ
 %left TOK_NOT
 
+%union {
+    char * vid;
+    int    integer;
+}
+
 /* Grammar follows */
 %%
 input:    /* empty string */
@@ -32,7 +41,7 @@ input:    /* empty string */
 | TOK_END
 ;
 
-assignment : TOK_ID TOK_ASSIGN expression
+assignment : expression
 ;
 
 expression :
@@ -41,14 +50,39 @@ expression :
 ;
 
 expression_binary : 
-    TOK_ID TOK_OP_AND TOK_ID
-|   TOK_ID TOK_OP_OR  TOK_ID
-|   TOK_ID TOK_OP_XOR TOK_ID
-|   TOK_ID TOK_OP_EQ  TOK_ID
+   TOK_ID TOK_ASSIGN TOK_ID TOK_OP_AND TOK_ID{
+        sat_binary_expression * toadd = sat_new_binary_expression(
+            atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_AND
+        );
+        free(toadd);
+    }
+|  TOK_ID TOK_ASSIGN TOK_ID TOK_OP_OR  TOK_ID{
+        sat_binary_expression * toadd = sat_new_binary_expression(
+            atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_OR
+        );
+        free(toadd);
+    }
+|  TOK_ID TOK_ASSIGN TOK_ID TOK_OP_XOR TOK_ID{
+        sat_binary_expression * toadd = sat_new_binary_expression(
+            atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_XOR
+        );
+        free(toadd);
+    }
+|  TOK_ID TOK_ASSIGN TOK_ID TOK_OP_EQ  TOK_ID{
+        sat_binary_expression * toadd = sat_new_binary_expression(
+            atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_EQ
+        );
+        free(toadd);
+    }
 ;
 
 expression_unary :
-    TOK_OP_NOT  TOK_ID
+    TOK_ID TOK_ASSIGN TOK_OP_NOT  TOK_ID {
+        sat_unary_expression * toadd = sat_new_unary_expression(
+            atoi($<vid>1),atoi($<vid>4), OP_NOT
+        );
+        free(toadd);
+    }
 ;
 %%
 

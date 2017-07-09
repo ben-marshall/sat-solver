@@ -51,6 +51,7 @@ message(STATUS "Parser Link Flags Release: ${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 set(LIBRARY_SRC imp-matrix.c
                 sat_expression_scanner.c
                 sat_expression_parser.c
+                sat-expression.c
 )
 
 add_library(${LIBRARY_NAME} ${LIBRARY_SRC})
