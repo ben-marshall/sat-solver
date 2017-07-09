@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "satsolver.h"
 
 /*!
 @brief The Main entry point function for the wrapper program.
