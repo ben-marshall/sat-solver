@@ -1,6 +1,8 @@
 
 .PHONY: clean
 
+all: sats
+
 setup:
 	cd ./build/ ; \
     cmake ../src/c

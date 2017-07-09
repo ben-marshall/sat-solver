@@ -1,9 +1,11 @@
 
 %defines
+%verbose
 
 %{
 
 #include <stdio.h>
+#define YYERROR_VERBOSE 1
 
 %}
 
@@ -26,12 +28,8 @@
 /* Grammar follows */
 %%
 input:    /* empty string */
-| input line
-;
-
-line:     '\n'
-| assignment '\n'  { 
-}
+| input assignment
+| TOK_END
 ;
 
 assignment : TOK_ID TOK_ASSIGN expression
@@ -53,3 +51,8 @@ expression_unary :
     TOK_OP_NOT  TOK_ID
 ;
 %%
+
+yyerror (char *s)
+{
+      printf ("[PARSE ERROR] %s\n", s);
+}
