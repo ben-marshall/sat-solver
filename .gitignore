@@ -12,3 +12,5 @@
 *.o
 
 build/*
+
+src/c/sat_expression_*

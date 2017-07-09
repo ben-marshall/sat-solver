@@ -12,14 +12,6 @@ message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 set(LIBRARY_NAME    satsolver)
 set(EXECUTABLE_NAME sats)
 
-set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
-
-set(FLEX_INPUT   sat_expression_scanner.l)
-set(FLEX_OUTPUT  sat_expression_scanner.c)
-
-set(BISON_INPUT  sat_expression_parser.y)
-set(BISON_OUTPUT sat_expression_parser.tab.c)
 
 # ------------------------------------------------------------------------
 
@@ -53,14 +45,12 @@ message(STATUS "Parser Build Flags Debug:   ${CMAKE_C_FLAGS_DEBUG}")
 message(STATUS "Parser Link Flags Debug:   ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 message(STATUS "Parser Build Flags Release: ${CMAKE_C_FLAGS_RELEASE}")
 message(STATUS "Parser Link Flags Release: ${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
-# ------------------------------------------------------------------------
-
-SET_SOURCE_FILES_PROPERTIES(${BINARY_DIR}/${FLEX_OUTPUT}  GENERATED)
-SET_SOURCE_FILES_PROPERTIES(${BINARY_DIR}/${BISON_OUTPUT} GENERATED)
 
 # ------------------------------------------------------------------------
 
 set(LIBRARY_SRC imp-matrix.c
+                sat_expression_scanner.c
+                sat_expression_parser.c
 )
 
 add_library(${LIBRARY_NAME} ${LIBRARY_SRC})

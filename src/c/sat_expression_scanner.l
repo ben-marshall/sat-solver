@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 
+#include "sat_expression_parser.h"
+
 %}
 
 %option yylineno
@@ -19,12 +21,12 @@ ASSIGN   =
 
 OP_EQ    ==
 OP_AND   &
-OP_OR    |
+OP_OR    \|
 OP_NOT   ~
-OP_XOR   ^
+OP_XOR   \^
 
-OB       (
-CB       )
+OB       \(
+CB       \)
 
 %%
 
@@ -32,7 +34,7 @@ CB       )
     yyterminate();
 }
 
-{DIGIT}    {
+{DIGIT} {
     return TOK_DIGIT;
 }
 
@@ -40,7 +42,7 @@ CB       )
     return TOK_ID;
 }
 
-{OB}  {
+{OB} {
     return TOK_OB;
 } 
 {CB} {
@@ -48,23 +50,23 @@ CB       )
 }
 
 {OP_EQ} {
-    return TOK_EQ;
+    return TOK_OP_EQ;
 }
 
 {OP_AND} {
-    return TOK_AND;
+    return TOK_OP_AND;
 }
 
 {OP_OR} {
-    return TOK_OR;
+    return TOK_OP_OR;
 }
 
 {OP_NOT} {
-    return TOK_NOT;
+    return TOK_OP_NOT;
 }
 
 {OP_XOR} {
-    return TOK_XOR;
+    return TOK_OP_XOR;
 }
 
 {ASSIGN} {
