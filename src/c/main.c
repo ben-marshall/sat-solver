@@ -27,6 +27,7 @@ void add_expressions(
     unsigned long expression_count = 0;
 
     sat_binary_expression * walker = yy_expressions;
+    sat_binary_expression * prev   ;
 
     sat_imp_matrix_cell * as_l;
     sat_imp_matrix_cell * as_r;
@@ -75,8 +76,9 @@ void add_expressions(
                 as_r -> na_imp_b = BITOP_SET;
                 break;
         }
-
+        prev = walker;
         walker = walker -> next;
+        sat_free_binary_expression(prev);
         expression_count += 1;
     }
 
