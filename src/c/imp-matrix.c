@@ -114,3 +114,96 @@ void sat_clear_imp_matrix(
 }
 
 
+
+
+/*!
+@brief Allocates a new sat_consistancy_check object.
+@param [in] is_consistant - Was the checked matrix consistant?
+@returns A pointer to the new object.
+*/
+sat_consistancy_check * sat_new_consistancy_check (
+    t_sat_bool is_consistant
+){
+    sat_consistancy_check * tr = calloc(1, sizeof(sat_consistancy_check));
+
+    if(tr == NULL) {
+     
+        return NULL;
+
+    } else {
+        
+        tr -> is_consistant = is_consistant;
+        return tr;
+
+    }
+}
+
+
+/*!
+@warning Asserts to_free != NULL
+*/
+void sat_free_consistancy_check (
+    sat_consistancy_check * to_free
+) {
+    assert(to_free != NULL);
+
+    free(to_free);
+}
+
+
+
+/*!
+@brief Checks that all implications in a single cell are consistent
+@param [in] sat_imp_matrix_cell - The cell to check for consistency.
+@returns True if the cell is consistent and False if it is not.
+*/
+inline t_sat_bool sat_check_imp_matrix_cell (
+    sat_imp_matrix_cell to_check
+) {
+    return !(
+        (to_check.a_imp_b  && to_check.a_imp_nb ) ||
+        (to_check.na_imp_b && to_check.na_imp_nb)
+    ) ;
+}
+
+
+
+/*!
+@warning
+- Asserts that imp_mat != NULL
+*/
+sat_consistancy_check * sat_check_imp_matrix (
+    sat_imp_matrix      * imp_mat,
+    t_sat_bool            exit_on_first
+) {
+    
+    assert(imp_mat != NULL);
+
+    sat_consistancy_check * tr = sat_new_consistancy_check(SAT_TRUE);
+
+    t_sat_bool first_fail = SAT_TRUE;
+    unsigned long index = 0;
+
+    for(index = 0; index < imp_mat -> cell_count; index += 1) {
+
+        sat_imp_matrix_cell to_check = imp_mat -> cells[index];
+
+        t_sat_bool is_consistant = sat_check_imp_matrix_cell(to_check);
+
+        if(!is_consistant) {
+            tr -> is_consistant = SAT_FALSE;
+
+            if(first_fail) {
+                tr -> first_failed_implyer = index / imp_mat -> variable_count;
+                tr -> first_failed_implyee = index % imp_mat -> variable_count;
+                first_fail = SAT_FALSE;
+            }
+            
+            if(exit_on_first) {
+                return tr;
+            }
+        }
+    }
+
+    return tr;
+}

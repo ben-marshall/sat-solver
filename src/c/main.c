@@ -48,8 +48,17 @@ int main (int argc, char ** argv)
     }
 
     // Make sure the matrix has no implications in it.
+    printf("Clearing implication matrix...           "); fflush(stdout);
     sat_clear_imp_matrix(imp_mat);
+    printf("[DONE]\n");
 
+    // Do a consistancy check on the empty matrix.
+    printf("Checking empty matrix for consistancy... "); fflush(stdout);
+    sat_consistancy_check * result = sat_check_imp_matrix(imp_mat, 1);
+    printf("[DONE]\n");
+
+    printf("Matrix Consistant: %d\n", result -> is_consistant);
+    
 
     // Free the implication matrix and return.
     sat_free_imp_matrix(imp_mat);

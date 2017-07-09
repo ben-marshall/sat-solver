@@ -16,6 +16,9 @@ typedef unsigned char t_sat_bool;
 //! @typedef Numerical representation of a single boolean variable.
 typedef unsigned int  t_sat_var;
 
+#define  SAT_TRUE   1
+#define  SAT_FALSE  0
+
 //  ------------------ Data Structures -----------------------------------
 
 /*!
@@ -71,6 +74,20 @@ typedef struct s_sat_imp_matrix {
 } sat_imp_matrix;
 
 
+/*!
+@brief Describes the results of checking an implication matrix for
+consistancy.
+*/
+typedef struct s_sat_consistancy_check {
+
+    t_sat_bool  is_consistant;  //<! Is the checked matrix consistant?
+    
+    t_sat_var   first_failed_implyer; //<! First inconsistant implyer.
+    t_sat_var   first_failed_implyee; //<! First inconsistant implyee.
+
+} sat_consistancy_check;
+
+
 //  ------------------ Function Prototypes -------------------------------
 
 
@@ -100,6 +117,25 @@ void sat_free_imp_matrix(
 
 
 /*!
+@brief Allocates a new sat_consistancy_check object.
+@param [in] is_consistant - Was the checked matrix consistant?
+@returns A pointer to the new object or NULL if the allocation fails.
+*/
+sat_consistancy_check * sat_new_consistancy_check (
+    t_sat_bool is_consistant
+);
+
+
+/*!
+@brief Frees a sat_consistancy_check object from memory.
+@param [in] *to_free - The object to free.
+*/
+void sat_free_consistancy_check (
+    sat_consistancy_check * to_free
+);
+
+
+/*!
 @brief Returns a pointer to the implication matrix cell for the supplied
        variables.
 @param [in] * imp_mat - The matrix to get the cell from.
@@ -115,10 +151,39 @@ sat_imp_matrix_cell * sat_get_imp_matrix_cell(
 
 /*!
 @brief Removes all implication relationships from a matrix.
+@note  Allows a single allocated matrix to be used on a different expression,
+       rather than re-allocating a whole new one. 
 @param [in] * imp_mat - The matrix to remove all implications from.
 */
 void sat_clear_imp_matrix(
     sat_imp_matrix * imp_mat
+);
+
+
+
+/*!
+@brief Checks that all implications in a single cell are consistent
+@param [in] sat_imp_matrix_cell - The cell to check for consistency.
+@returns True if the cell is consistent and False if it is not.
+*/
+t_sat_bool  sat_check_imp_matrix_cell (
+    sat_imp_matrix_cell to_check
+);
+
+
+
+/*!
+@brief Checks that all cells in an implication matrix are consistent
+@details If <exit_on_first> is true, then the function will return on the
+first inconsistant cell found. Otherwise it will keep going and counting all
+of the inconsistant cells.
+@param [in] * imp_mat - The matrix to check for consistency.
+@param [in] exit_on_first    - Return on the first inconsistent cell.
+@returns A sat_consistancy_check object describing the result of the check.
+*/
+sat_consistancy_check * sat_check_imp_matrix (
+    sat_imp_matrix      * imp_mat,
+    t_sat_bool            exit_on_first
 );
 
 #endif
