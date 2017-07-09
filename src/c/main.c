@@ -34,6 +34,12 @@ int main (int argc, char ** argv)
         return 1;
     }
 
+    // Lets try the parser...
+    printf("Starting the parser...                   "); fflush(stdout);
+    yyparse();
+    printf("[DONE]\n");
+
+
     // How many variables will our expression contain?
     unsigned int vcount = atoi(argv[1]);
 
@@ -63,12 +69,6 @@ int main (int argc, char ** argv)
 
     // Free the implication matrix and return.
     sat_free_imp_matrix(imp_mat);
-
-
-    // Lets try the parser...
-    printf("Starting the parser...                   "); fflush(stdout);
-    yyparse();
-    printf("[DONE]\n");
 
     return 0;
 }

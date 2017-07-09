@@ -13,25 +13,20 @@ typedef enum t_sat_operation{
     OP_NOT
 } sat_operation;
 
+
+typedef struct t_sat_binary_expression sat_binary_expression;
+
 /*!
 @brief Describes a single binary expression
 */
-typedef struct t_sat_binary_expression {
+struct t_sat_binary_expression {
     t_sat_var  assigne; //!< The variable assigned to.
     t_sat_var  lhs;     //!< Variable on the left side of the operator.
     t_sat_var  rhs;     //!< Variable on the right side of the operator.
     sat_operation op;    //!< The operation performed.
-} sat_binary_expression;
+    sat_binary_expression * next;
+};
 
-
-/*!
-@brief Describes a single unary expression
-*/
-typedef struct t_sat_unary_expression {
-    t_sat_var  assigne; //!< The variable assigned to.
-    sat_operation op;    //!< The operation performed.
-    t_sat_var  rhs;     //!< Variable on the right side of the operator.
-} sat_unary_expression;
 
 
 /*!
@@ -49,28 +44,9 @@ sat_binary_expression * sat_new_binary_expression(
     sat_operation op   
 );
 
-/*!
-@brief Create a new unary expression object.
-@param [in] assigne - The variable assigned to.
-@param [in] rhs     - Variable on the right side of the operator.
-@param [in] op      - The operation performed.
-@returns A pointer to the new expression object.
-*/
-sat_unary_expression * sat_new_unary_expression(
-    t_sat_var  assigne,
-    t_sat_var  rhs,    
-    sat_operation op   
-);
-
 //!@brief Frees a binary expression.
 void sat_free_binary_expression(
     sat_binary_expression * tofree
-);
-
-
-//!@brief Frees a unary expression.
-void sat_free_unary_expression(
-    sat_unary_expression * tofree
 );
 
 

@@ -39,6 +39,7 @@ CB       \)
 }
 
 {ID} {
+    yylval.vid = yytext;
     return TOK_ID;
 }
 

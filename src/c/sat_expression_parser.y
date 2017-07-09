@@ -4,18 +4,35 @@
 
 %{
 
+#define YYERROR_VERBOSE 1
+
 #include <stdio.h>
 #include <math.h>
 
 #include "sat-expression.h"
 
-#define YYERROR_VERBOSE 1
+//! @brief A linked list of expressions from the parsed file.
+sat_binary_expression * yy_expressions;
+
+
+/*!
+@brief Adds a new binary expression to the linked list yy_expressions
+*/
+void yy_add_expression(sat_binary_expression * toadd)
+{
+    if(yy_expressions == NULL) {
+        yy_expressions = toadd;
+    } else {
+        toadd ->next = yy_expressions;
+        yy_expressions = toadd;
+    }
+}
 
 %}
 
 /* BISON Declarations */
 %token TOK_DIGIT  
-%token TOK_ID     
+%token <vid> TOK_ID     
 %token TOK_END    
 %token TOK_ASSIGN 
 %token TOK_OP_EQ  
@@ -54,34 +71,38 @@ expression_binary :
         sat_binary_expression * toadd = sat_new_binary_expression(
             atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_AND
         );
-        free(toadd);
+        yy_add_expression(toadd);
     }
 |  TOK_ID TOK_ASSIGN TOK_ID TOK_OP_OR  TOK_ID{
         sat_binary_expression * toadd = sat_new_binary_expression(
-            atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_OR
+            atoi($<vid>1),atoi($<vid>2), atoi($<vid>5), OP_OR
         );
-        free(toadd);
+        
+        yy_add_expression(toadd);
     }
 |  TOK_ID TOK_ASSIGN TOK_ID TOK_OP_XOR TOK_ID{
         sat_binary_expression * toadd = sat_new_binary_expression(
             atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_XOR
         );
-        free(toadd);
+        yy_add_expression(toadd);
+        
     }
 |  TOK_ID TOK_ASSIGN TOK_ID TOK_OP_EQ  TOK_ID{
         sat_binary_expression * toadd = sat_new_binary_expression(
             atoi($<vid>1),atoi($<vid>3), atoi($<vid>5), OP_EQ
         );
-        free(toadd);
+        yy_add_expression(toadd);
+        
     }
 ;
 
 expression_unary :
     TOK_ID TOK_ASSIGN TOK_OP_NOT  TOK_ID {
-        sat_unary_expression * toadd = sat_new_unary_expression(
-            atoi($<vid>1),atoi($<vid>4), OP_NOT
+        sat_binary_expression * toadd = sat_new_binary_expression(
+            atoi($<vid>1),atoi($<vid>4), atoi($<vid>4), OP_NOT
         );
-        free(toadd);
+        yy_add_expression(toadd);
+        
     }
 ;
 %%

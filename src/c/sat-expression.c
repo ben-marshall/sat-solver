@@ -26,28 +26,6 @@ sat_binary_expression * sat_new_binary_expression(
     return tr;
 }
 
-
-/*!
-@brief Create a new unary expression object.
-@param [in] assigne - The variable assigned to.
-@param [in] rhs     - Variable on the right side of the operator.
-@param [in] op      - The operation performed.
-@returns A pointer to the new expression object.
-*/
-sat_unary_expression * sat_new_unary_expression(
-    t_sat_var  assigne,
-    t_sat_var  rhs,    
-    sat_operation op   
-){
-    sat_unary_expression * tr = calloc(1, sizeof(sat_unary_expression));
-
-    tr -> assigne = assigne;
-    tr -> rhs = rhs;
-    tr -> op  = op;
-    
-    return tr;
-}
-
 //!@brief Frees a binary expression.
 void sat_free_binary_expression(
     sat_binary_expression * tofree
@@ -55,10 +33,3 @@ void sat_free_binary_expression(
     free(tofree);
 }   
 
-
-//!@brief Frees a unary expression.
-void sat_free_unary_expression(
-    sat_unary_expression * tofree
-){
-    free(tofree);
-}
