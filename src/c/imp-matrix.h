@@ -93,7 +93,7 @@ typedef struct s_sat_consistancy_check {
 
 /*!
 @brief Allocates a new implication matrix object with the required number
-of cells to handle <variable_count> variables.
+of cells to handle variable_count variables.
 @param [in] variable_count - The number of variables the matrix must hold.
 @returns A pointer to a newly created implication matrix object or NULL if
 the matrix allocation failed.
@@ -107,7 +107,7 @@ sat_imp_matrix * sat_new_imp_matrix(
 
 /*!
 @brief Frees an implication matrix object from memory.
-@param [in] sat_imp_matrix - The implication matrix to be free'd.
+@param [in] imp_mat - The implication matrix to be free'd.
 @returns void
 @see sat_imp_matrix sat_new_imp_matrix
 */
@@ -138,7 +138,7 @@ void sat_free_consistancy_check (
 /*!
 @brief Returns a pointer to the implication matrix cell for the supplied
        variables.
-@param [in] * imp_mat - The matrix to get the cell from.
+@param [in] imp_mat - The matrix to get the cell from.
 @param [in] implyer_a - Variable whos value implies something about the other.
 @param [in] implyee_b - Variable whos value is implied by the other.
 */
@@ -153,7 +153,7 @@ sat_imp_matrix_cell * sat_get_imp_matrix_cell(
 @brief Removes all implication relationships from a matrix.
 @note  Allows a single allocated matrix to be used on a different expression,
        rather than re-allocating a whole new one. 
-@param [in] * imp_mat - The matrix to remove all implications from.
+@param [in] imp_mat - The matrix to remove all implications from.
 */
 void sat_clear_imp_matrix(
     sat_imp_matrix * imp_mat
@@ -163,7 +163,7 @@ void sat_clear_imp_matrix(
 
 /*!
 @brief Checks that all implications in a single cell are consistent
-@param [in] sat_imp_matrix_cell - The cell to check for consistency.
+@param [in] to_check - The cell to check for consistency.
 @returns True if the cell is consistent and False if it is not.
 */
 t_sat_bool  sat_check_imp_matrix_cell (
@@ -174,10 +174,10 @@ t_sat_bool  sat_check_imp_matrix_cell (
 
 /*!
 @brief Checks that all cells in an implication matrix are consistent
-@details If <exit_on_first> is true, then the function will return on the
+@details If exit_on_first is true, then the function will return on the
 first inconsistant cell found. Otherwise it will keep going and counting all
 of the inconsistant cells.
-@param [in] * imp_mat - The matrix to check for consistency.
+@param [in] imp_mat - The matrix to check for consistency.
 @param [in] exit_on_first    - Return on the first inconsistent cell.
 @returns A sat_consistancy_check object describing the result of the check.
 */

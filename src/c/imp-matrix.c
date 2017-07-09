@@ -153,9 +153,6 @@ void sat_free_consistancy_check (
 
 
 /*!
-@brief Checks that all implications in a single cell are consistent
-@param [in] sat_imp_matrix_cell - The cell to check for consistency.
-@returns True if the cell is consistent and False if it is not.
 */
 inline t_sat_bool sat_check_imp_matrix_cell (
     sat_imp_matrix_cell to_check
