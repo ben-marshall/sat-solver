@@ -33,24 +33,30 @@ void add_expressions(
     sat_imp_matrix_cell * l_as;
     sat_imp_matrix_cell * r_as;
 
-    as_l = sat_get_imp_matrix_cell(imp_mat,walker -> assigne, walker -> lhs);
-    as_r = sat_get_imp_matrix_cell(imp_mat,walker -> assigne, walker -> rhs);
-    l_as = sat_get_imp_matrix_cell(imp_mat, walker -> lhs,walker -> assigne);
-    r_as = sat_get_imp_matrix_cell(imp_mat, walker -> rhs,walker -> assigne);
-
     while(walker != NULL) {
+        int c,a,b;
+        c = walker -> assigne;
+        a = walker -> lhs;
+        b = walker -> rhs;
+
+        as_l = sat_get_imp_matrix_cell(imp_mat,walker->assigne, walker -> lhs);
+        as_r = sat_get_imp_matrix_cell(imp_mat,walker->assigne, walker -> rhs);
+        l_as = sat_get_imp_matrix_cell(imp_mat,walker->lhs,walker -> assigne);
+        r_as = sat_get_imp_matrix_cell(imp_mat,walker->rhs,walker -> assigne);
 
         switch(walker -> op) {
             case (OP_AND):
-                sat_set_imp_matrix_cell(as_l,1,0,0,0);
-                sat_set_imp_matrix_cell(as_r,1,0,0,0);
-                sat_set_imp_matrix_cell(l_as,0,0,0,1);
-                sat_set_imp_matrix_cell(r_as,0,0,0,1);
+                printf("%d = %d & %d\n",c,a,b);
+                as_l -> a_imp_b   = 1;
+                as_r -> a_imp_b   = 1;
+                r_as -> na_imp_nb = 1;
+                l_as -> na_imp_nb = 1;
                 break;
 
             case (OP_OR ):
-                sat_set_imp_matrix_cell(l_as,1,0,0,0);
-                sat_set_imp_matrix_cell(r_as,1,0,0,0);
+                printf("%d = %d | %d\n",c,a,b);
+                r_as -> a_imp_b = 1;
+                l_as -> a_imp_b = 1;
                 break;
 
             case (OP_XOR):
@@ -62,8 +68,11 @@ void add_expressions(
                 break;
 
             case (OP_NOT):
-                sat_set_imp_matrix_cell(as_l,0,1,1,0);
-                sat_set_imp_matrix_cell(l_as,0,1,1,0);
+                printf("%d = ~%d\n",c,b);
+                r_as -> a_imp_nb = 1;
+                r_as -> na_imp_b = 1;
+                as_r -> a_imp_nb = 1;
+                as_r -> na_imp_b = 1;
                 break;
         }
 
@@ -133,6 +142,22 @@ int main (int argc, char ** argv)
     printf("Checking full matrix for consistancy...  "); fflush(stdout);
     result = sat_check_imp_matrix(imp_mat, 1);
     printf("[DONE]\n");
+
+    printf("Matrix Consistant: %d\n", result -> is_consistant);
+    if(!result -> is_consistant) 
+    {
+        printf(": %d\n", result -> first_failed_implyer);
+        printf(": %d\n", result -> first_failed_implyee);
+
+        sat_imp_matrix_cell * cell = sat_get_imp_matrix_cell(imp_mat,
+            result -> first_failed_implyer,
+            result -> first_failed_implyee );
+        printf("(%d,%d,%d,%d)\n",
+            cell -> a_imp_b, cell -> a_imp_nb, cell -> na_imp_b,
+            cell -> na_imp_nb);
+    }
+    
+    free(result);
     
 
     // Free the implication matrix and return.

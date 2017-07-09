@@ -18,10 +18,10 @@ typedef unsigned int  t_sat_var;
 
 //! @brief Describes a type of operation on a bit.
 typedef enum {
-    BITOP_SET,
-    BITOP_CLEAR,
-    BITOP_IGNORE,
-    BITOP_TOGGLE
+    BITOP_SET = 1,
+    BITOP_CLEAR = 2,
+    BITOP_IGNORE = 0,
+    BITOP_TOGGLE = 3
 } t_sat_bitop;
 
 #define  SAT_TRUE   1
