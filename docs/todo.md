@@ -13,9 +13,9 @@
 ## Code
 
 - [ ] Main file
-- [ ] Input expression parsing
-- [ ] Variable representation
-- [ ] Implication Matrix Structure
+- [X] Input expression parsing
+- [X] Variable representation
+- [X] Implication Matrix Structure
 
 ## Testing
 
