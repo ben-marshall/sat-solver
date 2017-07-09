@@ -93,6 +93,46 @@ sat_imp_matrix_cell * sat_get_imp_matrix_cell(
 
 
 /*!
+@warning Asserts that cell != NULL
+*/
+void sat_set_imp_matrix_cell(
+    sat_imp_matrix_cell * cell     ,
+    t_sat_bitop           a_imp_b  , 
+    t_sat_bitop           a_imp_nb , 
+    t_sat_bitop           na_imp_b , 
+    t_sat_bitop           na_imp_nb 
+) {
+    assert(cell != NULL);
+
+    switch (a_imp_b) {
+        case BITOP_SET:     cell -> a_imp_b = 1; break;
+        case BITOP_CLEAR:   cell -> a_imp_b = 0; break;
+        case BITOP_TOGGLE:  cell -> a_imp_b = !(cell -> a_imp_b); break;
+    }
+
+    switch (a_imp_nb) {
+        case BITOP_SET:     cell -> a_imp_nb = 1; break;
+        case BITOP_CLEAR:   cell -> a_imp_nb = 0; break;
+        case BITOP_TOGGLE:  cell -> a_imp_nb = !(cell -> a_imp_nb); break;
+    }
+
+    switch (na_imp_b) {
+        case BITOP_SET:     cell -> na_imp_b = 1; break;
+        case BITOP_CLEAR:   cell -> na_imp_b = 0; break;
+        case BITOP_TOGGLE:  cell -> na_imp_b = !(cell -> na_imp_b); break;
+    }
+
+    switch (na_imp_nb) {
+        case BITOP_SET:     cell -> na_imp_nb = 1; break;
+        case BITOP_CLEAR:   cell -> na_imp_nb = 0; break;
+        case BITOP_TOGGLE:  cell -> na_imp_nb = !(cell -> na_imp_nb); break;
+    }
+
+    return;
+}
+
+
+/*!
 @warning
 - Asserts that imp_mat != NULL
 */

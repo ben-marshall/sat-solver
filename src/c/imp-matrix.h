@@ -16,6 +16,14 @@ typedef unsigned char t_sat_bool;
 //! @typedef Numerical representation of a single boolean variable.
 typedef unsigned int  t_sat_var;
 
+//! @brief Describes a type of operation on a bit.
+typedef enum {
+    BITOP_SET,
+    BITOP_CLEAR,
+    BITOP_IGNORE,
+    BITOP_TOGGLE
+} t_sat_bitop;
+
 #define  SAT_TRUE   1
 #define  SAT_FALSE  0
 
@@ -146,6 +154,23 @@ sat_imp_matrix_cell * sat_get_imp_matrix_cell(
     sat_imp_matrix * imp_mat,
     t_sat_var        implyer_a,
     t_sat_var        implyee_b
+);
+
+
+/*!
+@brief Modifies the implication relationships of a cell.
+@param [inout] cell   - The cell to modify.
+@param [in] a_imp_b   - Set/Clear/Ignore this implication relationship.
+@param [in] a_imp_nb  - Set/Clear/Ignore this implication relationship.
+@param [in] na_imp_b  - Set/Clear/Ignore this implication relationship.
+@param [in] na_imp_nb - Set/Clear/Ignore this implication relationship.
+*/
+void sat_set_imp_matrix_cell(
+    sat_imp_matrix_cell * cell     ,
+    t_sat_bitop           a_imp_b  , 
+    t_sat_bitop           a_imp_nb , 
+    t_sat_bitop           na_imp_b , 
+    t_sat_bitop           na_imp_nb 
 );
 
 
