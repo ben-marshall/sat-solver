@@ -14,7 +14,15 @@ code-docs:
 project-docs:
 	mkdocs build --clean --site-dir ./build/docs
 
-libsatsolver:
+parser:
+	flex -o src/c/sat_expression_scanner.c \
+	     --header-file=src/c/sat_expression_scanner.h \
+            src/c/sat_expression_scanner.l
+	bison --defines src/c/sat_expression_parser.h \
+	      -o src/c/sat_expression_parser.c \
+            src/c/sat_expression_parser.y
+
+libsatsolver: parser
 	$(MAKE) -C ./build satsolver
 
 sats: libsatsolver
