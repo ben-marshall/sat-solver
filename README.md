@@ -1,6 +1,9 @@
 
 # SAT Solver
 
+[![Project Documentation](https://readthedocs.org/projects/simple-sat-solver/badge/?version=latest)](http://simple-sat-solver.readthedocs.io/en/latest/overview)
+[![Code Documentation](https://codedocs.xyz/ben-marshall/sat-solver.svg)](https://codedocs.xyz/ben-marshall/sat-solver/)
+
 A simple SAT Solver based on the AC-3 Algorithm
 
 ---
