@@ -11,9 +11,9 @@
 @returns A pointer to the new expression object.
 */
 sat_binary_expression * sat_new_binary_expression(
-    t_sat_var  assigne,
-    t_sat_var  lhs,    
-    t_sat_var  rhs,    
+    t_sat_var_idx  assigne,
+    t_sat_var_idx  lhs,    
+    t_sat_var_idx  rhs,    
     sat_operation op   
 ){
     sat_binary_expression * tr = calloc(1, sizeof(sat_binary_expression));

@@ -14,7 +14,7 @@
 typedef unsigned char t_sat_bool;
 
 //! @typedef Numerical representation of a single boolean variable.
-typedef unsigned int  t_sat_var;
+typedef unsigned int  t_sat_var_idx;
 
 //! @brief Describes a type of operation on a bit.
 typedef enum {
@@ -90,8 +90,8 @@ typedef struct s_sat_consistancy_check {
 
     t_sat_bool  is_consistant;  //<! Is the checked matrix consistant?
     
-    t_sat_var   first_failed_implyer; //<! First inconsistant implyer.
-    t_sat_var   first_failed_implyee; //<! First inconsistant implyee.
+    t_sat_var_idx   first_failed_implyer; //<! First inconsistant implyer.
+    t_sat_var_idx   first_failed_implyee; //<! First inconsistant implyee.
 
 } sat_consistancy_check;
 
@@ -152,8 +152,8 @@ void sat_free_consistancy_check (
 */
 sat_imp_matrix_cell * sat_get_imp_matrix_cell(
     sat_imp_matrix * imp_mat,
-    t_sat_var        implyer_a,
-    t_sat_var        implyee_b
+    t_sat_var_idx        implyer_a,
+    t_sat_var_idx        implyee_b
 );
 
 
