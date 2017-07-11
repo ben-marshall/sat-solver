@@ -10,13 +10,13 @@
 @param [in] op      - The operation performed.
 @returns A pointer to the new expression object.
 */
-sat_binary_expression * sat_new_binary_expression(
+sat_expression * sat_new_binary_expression(
     t_sat_var_idx  assigne,
     t_sat_var_idx  lhs,    
     t_sat_var_idx  rhs,    
     sat_operation op   
 ){
-    sat_binary_expression * tr = calloc(1, sizeof(sat_binary_expression));
+    sat_expression * tr = calloc(1, sizeof(sat_expression));
 
     tr -> assigne = assigne;
     tr -> lhs = lhs;
@@ -28,7 +28,7 @@ sat_binary_expression * sat_new_binary_expression(
 
 //!@brief Frees a binary expression.
 void sat_free_binary_expression(
-    sat_binary_expression * tofree
+    sat_expression * tofree
 ){
     free(tofree);
 }   

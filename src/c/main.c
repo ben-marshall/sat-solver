@@ -26,8 +26,8 @@ void add_expressions(
 ) {
     unsigned long expression_count = 0;
 
-    sat_binary_expression * walker = yy_expressions;
-    sat_binary_expression * prev   ;
+    sat_expression * walker = yy_expressions;
+    sat_expression * prev   ;
 
     sat_imp_matrix_cell * as_l;
     sat_imp_matrix_cell * as_r;

@@ -13,18 +13,18 @@ typedef enum t_sat_operation{
     OP_NOT
 } sat_operation;
 
-
-typedef struct t_sat_binary_expression sat_binary_expression;
+//! Forward declaration of typedef.
+typedef struct t_sat_expression sat_expression;
 
 /*!
 @brief Describes a single binary expression
 */
-struct t_sat_binary_expression {
+struct t_sat_expression {
     t_sat_var_idx  assigne; //!< The variable assigned to.
     t_sat_var_idx  lhs;     //!< Variable on the left side of the operator.
     t_sat_var_idx  rhs;     //!< Variable on the right side of the operator.
     sat_operation op;    //!< The operation performed.
-    sat_binary_expression * next;
+    sat_expression * next;
 };
 
 
@@ -37,7 +37,7 @@ struct t_sat_binary_expression {
 @param [in] op      - The operation performed.
 @returns A pointer to the new expression object.
 */
-sat_binary_expression * sat_new_binary_expression(
+sat_expression * sat_new_binary_expression(
     t_sat_var_idx  assigne,
     t_sat_var_idx  lhs,    
     t_sat_var_idx  rhs,    
@@ -46,7 +46,7 @@ sat_binary_expression * sat_new_binary_expression(
 
 //!@brief Frees a binary expression.
 void sat_free_binary_expression(
-    sat_binary_expression * tofree
+    sat_expression * tofree
 );
 
 

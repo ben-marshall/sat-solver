@@ -6,6 +6,6 @@
 #include "sat-expression.h"
 
 //! External declaration of the expressions we have parsed.
-extern sat_binary_expression * yy_expressions;
+extern sat_expression * yy_expressions;
 
 #endif

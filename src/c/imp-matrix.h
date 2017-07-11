@@ -16,6 +16,9 @@ typedef unsigned char t_sat_bool;
 //! @typedef Numerical representation of a single boolean variable.
 typedef unsigned int  t_sat_var_idx;
 
+//! @typedef A string representing the name of a single boolean variable.
+typedef char * t_sat_var_name;
+
 //! @brief Describes a type of operation on a bit.
 typedef enum {
     BITOP_SET = 1,
