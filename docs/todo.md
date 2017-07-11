@@ -5,8 +5,8 @@
 
 
 ### Infrastructure
-- [ ] Codedocs Doxygen
-- [ ] Read the docs
+- [X] Codedocs Doxygen
+- [X] Read the docs
 
 ### Parser
 - [ ] Expression data structure
