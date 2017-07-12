@@ -78,8 +78,8 @@ void sat_free_imp_matrix(
 */
 sat_imp_matrix_cell * sat_get_imp_matrix_cell(
     sat_imp_matrix * imp_mat,
-    t_sat_var_idx        implyer_a,
-    t_sat_var_idx        implyee_b
+    sat_var_idx        implyer_a,
+    sat_var_idx        implyee_b
 ){
     assert(imp_mat != NULL);
     assert(imp_mat -> variable_count > implyer_a);

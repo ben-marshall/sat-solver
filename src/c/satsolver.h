@@ -2,10 +2,7 @@
 #ifndef H_SATSOLVER
 #define H_SATSOLVER
 
-#include "imp-matrix.h"
-#include "sat-expression.h"
-
-//! External declaration of the expressions we have parsed.
-extern sat_expression * yy_expressions;
+#define  SAT_TRUE   1
+#define  SAT_FALSE  0
 
 #endif

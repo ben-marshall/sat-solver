@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "satsolver.h"
+
 #ifndef H_IMP_MATRIX
 #define H_IMP_MATRIX
-
 
 //  ------------------ Type Definitions ----------------------------------
 
@@ -14,10 +15,10 @@
 typedef unsigned char t_sat_bool;
 
 //! @typedef Numerical representation of a single boolean variable.
-typedef unsigned int  t_sat_var_idx;
+typedef unsigned int  sat_var_idx;
 
 //! @typedef A string representing the name of a single boolean variable.
-typedef char * t_sat_var_name;
+typedef char * sat_var_name;
 
 //! @brief Describes a type of operation on a bit.
 typedef enum {
@@ -26,9 +27,6 @@ typedef enum {
     BITOP_IGNORE = 0,
     BITOP_TOGGLE = 3
 } t_sat_bitop;
-
-#define  SAT_TRUE   1
-#define  SAT_FALSE  0
 
 //  ------------------ Data Structures -----------------------------------
 
@@ -93,8 +91,8 @@ typedef struct s_sat_consistancy_check {
 
     t_sat_bool  is_consistant;  //<! Is the checked matrix consistant?
     
-    t_sat_var_idx   first_failed_implyer; //<! First inconsistant implyer.
-    t_sat_var_idx   first_failed_implyee; //<! First inconsistant implyee.
+    sat_var_idx   first_failed_implyer; //<! First inconsistant implyer.
+    sat_var_idx   first_failed_implyee; //<! First inconsistant implyee.
 
 } sat_consistancy_check;
 
@@ -155,8 +153,8 @@ void sat_free_consistancy_check (
 */
 sat_imp_matrix_cell * sat_get_imp_matrix_cell(
     sat_imp_matrix * imp_mat,
-    t_sat_var_idx        implyer_a,
-    t_sat_var_idx        implyee_b
+    sat_var_idx        implyer_a,
+    sat_var_idx        implyee_b
 );
 
 
