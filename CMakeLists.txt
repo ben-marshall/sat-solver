@@ -64,13 +64,14 @@ add_custom_command(
     COMMAND ${FLEX_EXECUTABLE} -o ${FLEX_OUT_C} --header-file=${FLEX_OUT_H} ${FLEX_IN}
     COMMENT "Generating Lexer"
     VERBATIM
+    DEPENDS ${FLEX_IN}
 )
 
 add_custom_command(
     OUTPUT  ${BISON_OUT_C}
     COMMAND ${BISON_EXECUTABLE} -o ${BISON_OUT_C} ${BISON_IN}
     COMMENT "Generating Parser"
-    DEPENDS ${FLEX_OUT_H}
+    DEPENDS ${FLEX_OUT_H} ${BISON_IN}
 )
 
 # ------------------------------------------------------------------------

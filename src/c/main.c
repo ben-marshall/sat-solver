@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "sat-expression.h"
 #include "satsolver.h"
 #include "imp-matrix.h"
 #include "parser/sat-expression-parser.h"

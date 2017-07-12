@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 
+#include "sat-expression.h"
 #include "sat-expression-parser.h"
 
 %}
