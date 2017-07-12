@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "sat-expression.h"
+#include "../sat-expression.h"
 
 //! @brief A linked list of expressions from the parsed file.
 sat_binary_expression * yy_expressions;

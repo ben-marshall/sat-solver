@@ -13,4 +13,4 @@
 
 build/*
 
-src/c/sat_expression_*
+src/c/parser/sat-expression-*[cht]
