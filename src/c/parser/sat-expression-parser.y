@@ -35,28 +35,44 @@ sat_var_idx yy_id_counter = 0;
 %left TOK_OP_AND TOK_OP_OR TOK_OP_XOR TOK_OP_EQ
 %left TOK_NOT
 
-%type <expr> expression_unary
-%type <expr> expression_binary
-%type <expr> expression
-%type <var>  variable
+%type <expr>    expression_unary
+%type <expr>    expression_binary
+%type <expr>    expression
+%type <var>     variable
+%type <assign>  assignment
+%type <assign>  input
+%type <assign>  start
 
 %union {
     char * vid;
     int    integer;
     sat_expression_node     * expr;
     sat_expression_variable * var;
+    sat_assignment          * assign;
 }
 
 /* Grammar follows */
 %%
 
-start : input TOK_END
+start : input TOK_END {
+    $$ = $1;
+}
 
-input:    /* empty string */
-| input assignment
+input:    /* empty string */ {
+    $$ = NULL;
+}
+| input assignment {
+    $$ = $2;
+    if ($1 != NULL)
+    {
+        $$ -> next = $1;
+    }
+}
 ;
 
-assignment : variable TOK_ASSIGN expression
+assignment : variable TOK_ASSIGN expression {
+    $$ = sat_new_assignment($1,$3);
+}
 ;
 
 expression :
@@ -72,21 +88,26 @@ expression :
 
 expression_binary : 
     expression TOK_OP_AND expression{
+    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_AND);
     }
 |  expression TOK_OP_OR  expression{
+    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_OR );
     }
 |  expression TOK_OP_XOR expression{
+    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_XOR);
     }
 |  expression TOK_OP_EQ  expression{
+    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_EQ );
     }
 ;
 
 expression_unary :
     TOK_OP_NOT expression {
+    yy_id_counter++;
     $$ = sat_new_unary_expression_node($2, SAT_OP_NOT); 
     }
 ;

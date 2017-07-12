@@ -148,5 +148,24 @@ sat_expression_node * sat_new_binary_expression_node (
     sat_operation         op_type
 );
 
+//! Typedef for representing a single assignment to a single variable.
+typedef struct t_sat_assignment sat_assignment;
+
+struct t_sat_assignment {
+    sat_expression_variable * variable;   //!< The variable being assigned to.
+    sat_expression_node     * expression; //!< Expression whoes value to take.
+    sat_assignment          * next; //!< Next in linked list.
+};
+
+
+/*!
+@brief Create a new assignment of an expression to a variable.
+@returns a pointer to the new assignment or NULL if the assignment fails.
+*/
+sat_assignment * sat_new_assignment (
+    sat_expression_variable * variable,   //!< The variable being assigned to.
+    sat_expression_node     * expression  //!< Expression whoes value to take.
+);
+
 #endif
 
