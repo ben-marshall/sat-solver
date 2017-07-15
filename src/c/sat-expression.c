@@ -218,8 +218,10 @@ sat_assignment * sat_new_assignment (
 
 /*!
 @brief Adds an expression and all sub-expressions into the implication matrix.
+@param in depth - How deep is this nested expression? 0 indicates the root.
 */
 void sat_add_expression_to_imp_matrix(
+    unsigned int          depth,
     sat_imp_matrix      * matrix,
     sat_expression_node * toadd
 ) {
@@ -234,39 +236,39 @@ void sat_add_expression_to_imp_matrix(
     if(toadd -> op_type == SAT_OP_NOT) {
 
         // We need to handle a UNARY operation.
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.unary_operands.rhs);
     
     } else if (toadd -> op_type == SAT_OP_AND) {
 
         // Binary AND OP.
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.rhs);
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
 
     } else if (toadd -> op_type == SAT_OP_OR) {
 
         // Binary OR OP.
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.rhs);
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
 
     } else if (toadd -> op_type == SAT_OP_XOR) {
 
         // Binary XOR OP.
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.rhs);
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
 
     } else if (toadd -> op_type == SAT_OP_EQ) {
 
         // Binary NXOR OP.
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.rhs);
-        sat_add_expression_to_imp_matrix(matrix, 
+        sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
 
     } else {
@@ -294,7 +296,7 @@ void sat_add_assignment_to_imp_matrix(
     assert(toadd  != NULL);
 
     // First add the expression associated with the assignment.
-    sat_add_expression_to_imp_matrix(matrix, toadd -> expression);
+    sat_add_expression_to_imp_matrix(0,matrix, toadd -> expression);
     
     // Now add the implications for the variable being assigned to.
 }

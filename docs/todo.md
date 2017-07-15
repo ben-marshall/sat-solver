@@ -13,7 +13,7 @@
 - [X] Nested expression parsing
 
 ### Implication Matrix
-- [ ] Generate matrix based on size of expression tree
+- [X] Generate matrix based on size of expression tree
 - [ ] Inserting tree into matrix
 - [ ] Filling out of matrix from tree leaf to root.
 
