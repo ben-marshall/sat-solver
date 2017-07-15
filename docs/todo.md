@@ -9,8 +9,8 @@
 - [X] Read the docs
 
 ### Parser
-- [ ] Expression data structure
-- [ ] Nested expression parsing
+- [X] Expression data structure
+- [X] Nested expression parsing
 
 ### Implication Matrix
 - [ ] Generate matrix based on size of expression tree

@@ -9,7 +9,7 @@ setup:
     cmake ../
 
 clean:
-	rm -rf ./build/*
+	$(MAKE) -C ./build clean
 
 code-docs:
 	doxygen doxyfile

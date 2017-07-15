@@ -14,9 +14,9 @@
 %option noyywrap 
 
 DIGIT    [01]
-ID       [2-9][0-9]*
+ID       [a-zA-Z][a-zA-Z_0-9]*
 
-END      END
+END      end
 
 ASSIGN   =
 
@@ -32,7 +32,7 @@ CB       \)
 %%
 
 {END}  {
-    yyterminate();
+    return TOK_END;
 }
 
 {DIGIT} {

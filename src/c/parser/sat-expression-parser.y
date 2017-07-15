@@ -14,6 +14,9 @@
 void yy_add_expression(sat_expression_node * toadd);
 int  yyerror          (const char          * s    );
 
+//! @note Declared in sat-expression.h
+extern sat_assignment * yy_assignments;
+
 //! @brief Keeps track of unique identifiers for all variables.
 sat_var_idx yy_id_counter = 0;
 
@@ -56,6 +59,7 @@ sat_var_idx yy_id_counter = 0;
 
 start : input TOK_END {
     $$ = $1;
+    yy_assignments = $$;
 }
 
 input:    /* empty string */ {

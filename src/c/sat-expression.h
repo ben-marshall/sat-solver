@@ -151,6 +151,11 @@ sat_expression_node * sat_new_binary_expression_node (
 //! Typedef for representing a single assignment to a single variable.
 typedef struct t_sat_assignment sat_assignment;
 
+/*!
+@brief Global variable containing a linked list of assignment expressions.
+*/
+sat_assignment * yy_assignments;
+
 struct t_sat_assignment {
     sat_expression_variable * variable;   //!< The variable being assigned to.
     sat_expression_node     * expression; //!< Expression whoes value to take.
@@ -165,6 +170,18 @@ struct t_sat_assignment {
 sat_assignment * sat_new_assignment (
     sat_expression_variable * variable,   //!< The variable being assigned to.
     sat_expression_node     * expression  //!< Expression whoes value to take.
+);
+
+
+/*!
+@brief Takes a single assignment expression and adds it to the implication
+matrix.
+@param inout matrix - The matrix to add the assignment to
+@param in    toadd  - The assignment to add to the matrix.
+*/
+void sat_add_assignment_to_imp_matrix(
+    sat_imp_matrix * matrix,
+    sat_assignment * toadd
 );
 
 #endif

@@ -107,6 +107,7 @@ sat_expression_node * sat_new_leaf_expression_node (
 ) {
     assert(variable != NULL);
     sat_expression_node * tr = calloc(1, sizeof(sat_expression_node));
+    tr -> node_type = SAT_EXPRESSION_LEAF;
 
     if(tr == NULL)
     {
@@ -137,6 +138,7 @@ sat_expression_node * sat_new_unary_expression_node (
     assert(child   != NULL);
 
     sat_expression_node * tr = calloc(1, sizeof(sat_expression_node));
+    tr -> node_type = SAT_EXPRESSION_NODE;
 
     if(tr == NULL)
     {
@@ -172,6 +174,7 @@ sat_expression_node * sat_new_binary_expression_node (
            op_type == SAT_OP_XOR );
 
     sat_expression_node * tr = calloc(1, sizeof(sat_expression_node));
+    tr -> node_type = SAT_EXPRESSION_NODE;
 
     if(tr == NULL)
     {
@@ -210,4 +213,88 @@ sat_assignment * sat_new_assignment (
         tr -> variable = variable;
         return tr;
     }
+}
+
+
+/*!
+@brief Adds an expression and all sub-expressions into the implication matrix.
+*/
+void sat_add_expression_to_imp_matrix(
+    sat_imp_matrix      * matrix,
+    sat_expression_node * toadd
+) {
+    
+    // We don't need to handle this kind of node.
+    if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
+        printf("Leafnode %d (%s)\n", toadd -> node.leaf_variable -> uid ,
+                                     toadd -> node.leaf_variable -> name);
+        return;
+    }
+
+    if(toadd -> op_type == SAT_OP_NOT) {
+
+        // We need to handle a UNARY operation.
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.unary_operands.rhs);
+    
+    } else if (toadd -> op_type == SAT_OP_AND) {
+
+        // Binary AND OP.
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.rhs);
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.lhs);
+
+    } else if (toadd -> op_type == SAT_OP_OR) {
+
+        // Binary OR OP.
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.rhs);
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.lhs);
+
+    } else if (toadd -> op_type == SAT_OP_XOR) {
+
+        // Binary XOR OP.
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.rhs);
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.lhs);
+
+    } else if (toadd -> op_type == SAT_OP_EQ) {
+
+        // Binary NXOR OP.
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.rhs);
+        sat_add_expression_to_imp_matrix(matrix, 
+                                         toadd -> node.binary_operands.lhs);
+
+    } else {
+        
+        // Whaa?
+        printf("Warning: Unknown binary op type: '%d'\n", toadd -> op_type);
+        return;
+        
+    }
+
+}
+
+
+/*!
+@brief Takes a single assignment expression and adds it to the implication
+matrix.
+@param inout matrix - The matrix to add the assignment to
+@param in    toadd  - The assignment to add to the matrix.
+*/
+void sat_add_assignment_to_imp_matrix(
+    sat_imp_matrix * matrix,
+    sat_assignment * toadd
+){
+    assert(matrix != NULL);
+    assert(toadd  != NULL);
+
+    // First add the expression associated with the assignment.
+    sat_add_expression_to_imp_matrix(matrix, toadd -> expression);
+    
+    // Now add the implications for the variable being assigned to.
 }
