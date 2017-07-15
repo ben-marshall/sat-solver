@@ -55,22 +55,17 @@ sat_expression_variable * yy_sat_variables;
 
 /*!
 @brief Create a new un-named SAT expression variable.
-@param in id    - Unique identifier
 @returns A pointer to a newly created sat_expression_variable.
 */
-sat_expression_variable * sat_new_expression_variable(
-    sat_var_idx     uid
-);
+sat_expression_variable * sat_new_expression_variable();
 
 
 /*!
 @brief Create a new named SAT expression variable.
 @param in name  - Friendly name
-@param in id    - Unique identifier
 @returns A pointer to a newly created sat_expression_variable.
 */
 sat_expression_variable * sat_new_named_expression_variable(
-    sat_var_idx     uid,
     sat_var_name    name
 );
 

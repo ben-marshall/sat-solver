@@ -10,7 +10,6 @@
 #include "parser/sat-expression-scanner.h"
 
 extern FILE *       yyin;
-extern sat_var_idx  yy_id_counter;
 
 /*!
 @brief Prints command line usage options for the program.
@@ -60,16 +59,8 @@ int main (int argc, char ** argv)
     // We are finished with the input now.
     fclose(yyin);
 
-    if(yy_id_counter == 0) {
-        printf("Error: input file '%s' contains no expressions\n", input_file);
-        return 1;
-    }
-
-    // Print some information.
-    printf("> ID Count: \t%d\n", yy_id_counter);
-
     // Build the implication matrix
-    sat_imp_matrix * imp_matrix = sat_new_imp_matrix(yy_id_counter);
+    sat_imp_matrix * imp_matrix = sat_new_imp_matrix(20);
 
     // Make sure the empty matrix is consistant first.
     sat_consistancy_check * result = sat_check_imp_matrix(imp_matrix,1);

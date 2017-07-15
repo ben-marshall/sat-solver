@@ -17,9 +17,6 @@ int  yyerror          (const char          * s    );
 //! @note Declared in sat-expression.h
 extern sat_assignment * yy_assignments;
 
-//! @brief Keeps track of unique identifiers for all variables.
-sat_var_idx yy_id_counter = 0;
-
 %}
 
 /* BISON Declarations */
@@ -92,32 +89,27 @@ expression :
 
 expression_binary : 
     expression TOK_OP_AND expression{
-    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_AND);
     }
 |  expression TOK_OP_OR  expression{
-    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_OR );
     }
 |  expression TOK_OP_XOR expression{
-    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_XOR);
     }
 |  expression TOK_OP_EQ  expression{
-    yy_id_counter++;
     $$ = sat_new_binary_expression_node($1,$3,SAT_OP_EQ );
     }
 ;
 
 expression_unary :
     TOK_OP_NOT expression {
-    yy_id_counter++;
     $$ = sat_new_unary_expression_node($2, SAT_OP_NOT); 
     }
 ;
 
 variable : TOK_ID {
-    $$ = sat_new_named_expression_variable(yy_id_counter++,$1);
+    $$ = sat_new_named_expression_variable($1);
 };
 
 %%

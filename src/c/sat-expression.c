@@ -6,18 +6,15 @@
 
 #include "sat-expression.h"
 
-//! Linked list of named variables.
-extern sat_expression_variable * yy_sat_variables;
-
+//! Incremented every time we declare a new ID.
+unsigned int yy_id_counter = 0;
 
 /*!
 @brief Create a new un-named SAT expression variable.
-@param in id    - Unique identifier
 @returns A pointer to a newly created sat_expression_variable.
 */
-sat_expression_variable * sat_new_expression_variable(
-    sat_var_idx     uid
-){
+sat_expression_variable * sat_new_expression_variable( )
+{
     sat_expression_variable * tr = calloc(1, sizeof(sat_expression_variable));
 
     if(tr == NULL)
@@ -26,7 +23,7 @@ sat_expression_variable * sat_new_expression_variable(
     }
     else
     {
-        tr -> uid  = uid;
+        tr -> uid  = yy_id_counter ++;
         tr -> name = '\0';
         return tr;
     }
@@ -36,11 +33,9 @@ sat_expression_variable * sat_new_expression_variable(
 /*!
 @brief Create a new named SAT expression variable.
 @param in name  - Friendly name
-@param in id    - Unique identifier
 @returns A pointer to a newly created sat_expression_variable.
 */
 sat_expression_variable * sat_new_named_expression_variable(
-    sat_var_idx     uid,
     sat_var_name    name
 ){
     // Check if a variable with this name already exists.
@@ -48,7 +43,7 @@ sat_expression_variable * sat_new_named_expression_variable(
 
     if(walker == NULL) {
 
-        sat_expression_variable * tr = sat_new_expression_variable(uid);
+        sat_expression_variable * tr = sat_new_expression_variable();
         tr     -> name = name;
         yy_sat_variables = tr;
         return tr;
@@ -64,7 +59,7 @@ sat_expression_variable * sat_new_named_expression_variable(
 
         } else if (result < 0) {
 
-            sat_expression_variable * tr = sat_new_expression_variable(uid);
+            sat_expression_variable * tr = sat_new_expression_variable();
             tr     -> next = walker -> next;
             walker -> next = tr;
             tr     -> name = name;
@@ -72,7 +67,7 @@ sat_expression_variable * sat_new_named_expression_variable(
 
         } else if (walker -> next == NULL)  {
             
-            sat_expression_variable * tr = sat_new_expression_variable(uid);
+            sat_expression_variable * tr = sat_new_expression_variable();
             walker -> next = tr;
             tr     -> name = name;
             return tr;
