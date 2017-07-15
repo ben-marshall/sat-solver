@@ -46,7 +46,7 @@ int main (int argc, char ** argv)
 
     char * input_file = argv[1];
     printf("Parsing '%s' ", input_file); fflush(stdout);
-    yyin = fopen(input_file,"r");
+    yyset_in(fopen(input_file,"r"));
 
     if(yyin == NULL) {
         printf("Error: Could not open input file '%s'\n", input_file);

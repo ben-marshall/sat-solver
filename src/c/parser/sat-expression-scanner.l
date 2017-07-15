@@ -3,6 +3,7 @@
 %{
 
 #include <stdio.h>
+#include <string.h>
 
 #include "sat-expression.h"
 #include "sat-expression-parser.h"
@@ -40,7 +41,9 @@ CB       \)
 }
 
 {ID} {
-    yylval.vid = yytext;
+    size_t text_len = strlen(yytext);
+    yylval.vid = calloc(text_len, sizeof(char));
+    memcpy(yylval.vid, yytext,text_len);
     return TOK_ID;
 }
 
