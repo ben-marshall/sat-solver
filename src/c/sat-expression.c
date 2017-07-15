@@ -2,9 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "sat-expression.h"
 
+//! Linked list of named variables.
+extern sat_expression_variable * yy_sat_variables;
 
 
 /*!
@@ -40,17 +43,45 @@ sat_expression_variable * sat_new_named_expression_variable(
     sat_var_idx     uid,
     sat_var_name    name
 ){
-    sat_expression_variable * tr = sat_new_expression_variable(uid);
+    // Check if a variable with this name already exists.
+    sat_expression_variable * walker = yy_sat_variables;
 
-    if(tr == NULL)
-    {
-        return NULL;
-    }
-    else
-    {
-        tr -> name = name;
+    if(walker == NULL) {
+
+        sat_expression_variable * tr = sat_new_expression_variable(uid);
+        tr     -> name = name;
+        yy_sat_variables = tr;
         return tr;
     }
+
+    while(walker != NULL) {
+
+        int result = strcmp(name, walker -> name);
+
+        if(result == 0) {
+            
+            return walker;
+
+        } else if (result < 0) {
+
+            sat_expression_variable * tr = sat_new_expression_variable(uid);
+            tr     -> next = walker -> next;
+            walker -> next = tr;
+            tr     -> name = name;
+            return tr;
+
+        } else if (walker -> next == NULL)  {
+            
+            sat_expression_variable * tr = sat_new_expression_variable(uid);
+            walker -> next = tr;
+            tr     -> name = name;
+            return tr;
+
+        } else {
+            walker = walker -> next;
+        }
+    }
+    assert(1==0);
 }
 
 

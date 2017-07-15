@@ -37,10 +37,20 @@ typedef enum t_sat_expression_node_type {
     
     The result of (E+d) does not imply a variable, this is represented by a.
 */
-typedef struct t_sat_expression_variable {
+typedef struct t_sat_expression_variable sat_expression_variable;
+struct t_sat_expression_variable {
     sat_var_idx     uid;    //!< Unique identifier of the variable.
     sat_var_name    name;   //!< Friendly name. 'a/b/c/d' in example above.
-} sat_expression_variable;
+    sat_expression_variable * next; //!< Next in linked list of variables.
+} ;
+
+/*!
+@brief A linked list of all unique expression variables.
+@details This is maintained when the sat_new_*_expression_variable function
+is called. If the variable being added already exists, it is returned from
+this list. Otherwise it is inserted into the list.
+*/
+sat_expression_variable * yy_sat_variables;
 
 
 /*!
