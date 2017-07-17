@@ -250,6 +250,30 @@ sat_consistancy_check * sat_check_imp_matrix (
 }
 
 
+/*!
+@brief Given variables A,B,C where some relationships between A,B and B,C
+exist, find relationships between A and C.
+@param in ab - Variable A -> B
+@param in bc - Variable B -> C
+@param in ac - Variable A -> C
+*/
+void sat_propagate_abc(
+sat_imp_matrix_cell * ab,
+sat_imp_matrix_cell * bc,
+sat_imp_matrix_cell * ac
+) {
+    ac -> a_imp_b   = ab -> a_imp_b  && bc -> a_imp_b   ||
+                      ab -> a_imp_nb && bc -> na_imp_b   ;
+
+    ac -> a_imp_nb  = ab -> a_imp_b  && bc -> a_imp_nb  ||
+                      ab -> a_imp_nb && bc -> na_imp_nb  ;
+
+    ac -> na_imp_b  = ab -> na_imp_b  && bc -> a_imp_b  ||
+                      ab -> na_imp_nb && bc -> na_imp_b  ;
+
+    ac -> na_imp_nb = ab -> na_imp_b  && bc -> a_imp_nb  ||
+                      ab -> na_imp_nb && bc -> na_imp_nb  ;
+}
 
 
 /*!
@@ -262,16 +286,41 @@ void sat_propagate_imp_matrix(
 ){
     sat_var_idx imp_a;
     sat_var_idx imp_b;
-    unsigned long row_offset;
+    sat_var_idx imp_c;
 
     for(imp_a = 0; imp_a < matrix -> variable_count ; imp_a += 1) {
-        row_offset = imp_a * matrix -> variable_count;
 
         for(imp_b = 0; imp_b < matrix -> variable_count ; imp_b += 1) {
+            
             printf("."); fflush(stdout);
-    
-            unsigned long index = row_offset  + imp_b;
-            sat_imp_matrix_cell cell = matrix -> cells[index];
+
+            sat_imp_matrix_cell* a_on_b = sat_get_imp_matrix_cell(matrix,
+                                                        imp_a,imp_b);
+            
+            if(!(a_on_b -> a_imp_b     || a_on_b -> a_imp_nb ||
+                 a_on_b -> na_imp_nb   || a_on_b -> na_imp_b )) {
+                // No relationship between a and b, so continue.
+                continue;
+            }
+            
+            for(imp_c = 0; imp_c < matrix -> variable_count ; imp_c += 1) {
+            
+
+                sat_imp_matrix_cell* b_on_c = sat_get_imp_matrix_cell(matrix,
+                                                        imp_b,imp_c);
+            
+                if(!(b_on_c -> a_imp_b     || b_on_c -> a_imp_nb ||
+                     b_on_c -> na_imp_nb   || b_on_c -> na_imp_b )) {
+                    // No relationship between b and c, so continue.
+                    continue;
+                }
+
+                // Propagate any implications from a to c through b.
+                sat_imp_matrix_cell* a_on_c = sat_get_imp_matrix_cell(matrix,
+                                                        imp_a,imp_c);
+                
+                sat_propagate_abc(a_on_b, b_on_c, a_on_c);
+            }
 
         }
         printf("\n"); fflush(stdout);

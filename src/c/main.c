@@ -99,6 +99,10 @@ int main (int argc, char ** argv)
 
     if(! result -> is_consistant) {
         printf("Error: Matrix not consistant.\n");
+
+        printf("Relationship between %d and %d is inconsistant:\n",
+            result -> first_failed_implyer, result->first_failed_implyee);
+
     } else {
         printf("Matrix is consistant!\n");
     }

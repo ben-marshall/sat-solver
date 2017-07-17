@@ -13,6 +13,7 @@ markdown_extensions:
 
 pages:
 - Overview: overview.md
+- Implication: implication-notes.md
 - Todo List: todo.md
 
 
