@@ -24,7 +24,7 @@ sat_expression_variable * sat_new_expression_variable( )
     else
     {
         tr -> uid  = yy_id_counter ++;
-        tr -> name = '\0';
+        tr -> name = NULL;
         return tr;
     }
 }
@@ -118,6 +118,41 @@ sat_expression_node * sat_new_expression_node (
         tr -> node_type = node_type;
         return tr;
     }
+}
+
+
+/*!
+@brief Free the memory taken up by an expression node.
+@details Recursively fees this expression node and all sub-expression nodes,
+but leaves the leaf variables allocated for later use.
+@param in tofree    - Pointer to the expression node to free.
+*/
+void sat_free_expression_node(
+    sat_expression_node * tofree
+){
+    assert(tofree != NULL);
+
+    if(tofree -> node_type == SAT_EXPRESSION_LEAF) {
+
+        // Don't free anything more.
+
+    } else if (tofree -> node_type == SAT_EXPRESSION_NODE) {
+
+        if(tofree -> op_type == SAT_OP_NOT) {
+
+            sat_free_expression_node(tofree -> node.unary_operands.rhs);
+
+        } else {
+
+            sat_free_expression_node(tofree -> node.binary_operands.lhs);
+            sat_free_expression_node(tofree -> node.binary_operands.rhs);
+
+        }
+
+    }
+    
+    free(tofree);
+
 }
 
 
@@ -243,6 +278,31 @@ sat_assignment * sat_new_assignment (
 
 
 /*!
+@brief Frees an assignmnet from memory along with all child expression
+data structures. It does *not* free the expression variables however.
+Can also free the pointed to <next> sat_assignment member.
+@param in tofree - pointer to the assignmen to be free'd.
+@param in freelist - Should we also recursively free the *next item in the
+linked list?
+*/
+void sat_free_assignment(
+    sat_assignment * tofree,
+    t_sat_bool       freelist
+){
+    assert(tofree               != NULL);
+    assert(tofree -> expression != NULL);
+
+    if(freelist && tofree -> next != NULL) {
+        sat_free_assignment(tofree -> next, SAT_TRUE);
+    }
+    
+    sat_free_expression_node(tofree -> expression);
+
+    free(tofree);
+}
+
+
+/*!
 @brief Adds an expression and all sub-expressions into the implication matrix.
 @param in depth - How deep is this nested expression? 0 indicates the root.
 */
@@ -313,6 +373,7 @@ void sat_add_expression_to_imp_matrix(
 matrix.
 @param inout matrix - The matrix to add the assignment to
 @param in    toadd  - The assignment to add to the matrix.
+@todo Finish implementing this.
 */
 void sat_add_assignment_to_imp_matrix(
     sat_imp_matrix * matrix,

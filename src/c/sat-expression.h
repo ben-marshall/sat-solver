@@ -113,6 +113,15 @@ struct t_sat_expression_node {
     } node ;
 };
 
+/*!
+@brief Free the memory taken up by an expression node.
+@details Recursively fees this expression node and all sub-expression nodes,
+but leaves the leaf variables allocated for later use.
+@param in tofree    - Pointer to the expression node to free.
+*/
+void sat_free_expression_node(
+    sat_expression_node        * tofree
+);
 
 
 /*!
@@ -175,6 +184,21 @@ struct t_sat_assignment {
 sat_assignment * sat_new_assignment (
     sat_expression_variable * variable,   //!< The variable being assigned to.
     sat_expression_node     * expression  //!< Expression whoes value to take.
+);
+
+
+/*!
+@brief Frees an assignmnet from memory along with all child expression
+data structures. It does *not* free the expression variables however.
+Can also free the pointed to <next> sat_assignment member.
+@param in tofree - pointer to the assignmen to be free'd.
+@param in freelist - Should we also recursively free the *next item in the
+linked list?
+@todo Implement this.
+*/
+void sat_free_assignment(
+    sat_assignment * tofree,
+    t_sat_bool       freelist
 );
 
 

@@ -58,6 +58,7 @@ int main (int argc, char ** argv)
 
     // We are finished with the input now.
     fclose(yyin);
+    yylex_destroy();
 
     // Build the implication matrix
     sat_imp_matrix * imp_matrix = sat_new_imp_matrix(20);
@@ -78,6 +79,9 @@ int main (int argc, char ** argv)
         sat_add_assignment_to_imp_matrix(imp_matrix,walker);
         walker = walker -> next;
     }
+
+    // Free the assignment tree.
+    sat_free_assignment(yy_assignments, 1);
 
     // Free the implication matrix
     sat_free_imp_matrix(imp_matrix);
