@@ -79,6 +79,17 @@ sat_expression_variable * sat_new_named_expression_variable(
 
 
 /*!
+@brief Returns the variable associated with the supplied ID.
+@param in id - The unique id of the variable.
+@returns A pointer to the expression variable or NULL if no such variable
+exists.
+*/
+sat_expression_variable * sat_get_variable_from_id(
+    sat_var_idx     id
+);
+
+
+/*!
 @brief Free the memory taken up by an expression variable.
 @param in tofree    - Pointer to the variable to free.
 @param in freelist  - Should we recursively free the *next field?

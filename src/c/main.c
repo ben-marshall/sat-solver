@@ -100,8 +100,16 @@ int main (int argc, char ** argv)
     if(! result -> is_consistant) {
         printf("Error: Matrix not consistant.\n");
 
-        printf("Relationship between %d and %d is inconsistant:\n",
-            result -> first_failed_implyer, result->first_failed_implyee);
+        sat_expression_variable * var_a = 
+                      sat_get_variable_from_id(result -> first_failed_implyer);
+        sat_expression_variable * var_b = 
+                      sat_get_variable_from_id(result -> first_failed_implyee);
+
+        assert(var_a != NULL);
+        assert(var_b != NULL);
+
+        printf("Relationship between %s and %s is inconsistant:\n",
+                                               var_a -> name, var_b -> name);
 
     } else {
         printf("Matrix is consistant!\n");
