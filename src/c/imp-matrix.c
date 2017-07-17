@@ -86,6 +86,8 @@ sat_imp_matrix_cell * sat_get_imp_matrix_cell(
     assert(imp_mat -> variable_count > implyee_b);
 
     unsigned long index = (implyer_a * imp_mat -> variable_count) + implyee_b;
+    imp_mat -> cells[index].implyer = implyer_a;
+    imp_mat -> cells[index].implyee = implyee_b;
     
     // Return a pointer to the addressed cell.
     return &(imp_mat -> cells[index]);
@@ -103,6 +105,8 @@ void sat_set_imp_matrix_cell(
     t_sat_bitop           na_imp_nb 
 ) {
     assert(cell != NULL);
+
+    printf("%d %d %d %d\n", a_imp_b, a_imp_nb, na_imp_b, na_imp_nb);
 
     switch (a_imp_b) {
         case BITOP_SET:     cell -> a_imp_b = 1; break;

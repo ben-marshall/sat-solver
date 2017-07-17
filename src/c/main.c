@@ -77,12 +77,30 @@ int main (int argc, char ** argv)
     }
     free(result);
 
+    printf("Adding assignments to matrix... "); fflush(stdout);
+
     // Add all of the assignments to the implication matrix.
     sat_assignment * walker = yy_assignments;
     while(walker != NULL) {
         sat_add_assignment_to_imp_matrix(imp_matrix,walker);
         walker = walker -> next;
     }
+    
+    printf("[DONE]\n");
+    printf("Checking Consistancy... "); fflush(stdout);
+
+    result = sat_check_imp_matrix(imp_matrix,1);
+    printf("[DONE]\n");
+
+    if(! result -> is_consistant) {
+        printf("Error: Matrix not consistant.\n");
+    } else {
+        printf("Matrix is consistant!\n");
+    }
+    free(result);
+
+
+    // ---- End of program. Clean up. --------
 
     // Free the assignment tree.
     sat_free_assignment(yy_assignments, 1);

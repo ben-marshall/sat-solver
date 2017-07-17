@@ -152,10 +152,10 @@ sat_expression_node * sat_new_expression_node (
     {
         tr -> node_type = node_type;
         
-        if( tr -> node_type == SAT_EXPRESSION_NODE) {
-            char * varname = sat_expression_var_id_to_name(yy_id_counter+1);
-            tr -> ir = sat_new_named_expression_variable(varname);
-        }
+        char * varname = sat_expression_var_id_to_name(yy_id_counter+1);
+        tr -> ir = sat_new_named_expression_variable(varname);
+
+        printf("Expression node: %d - %s\n", node_type, varname);
 
         return tr;
     }
@@ -341,6 +341,111 @@ void sat_free_assignment(
 
 
 /*!
+@brief Adds all implications for a NOT expression to the matrix
+@param in matrix - The implication matrix to add entries too.
+@param in toadd - The expression to add implications for.
+*/
+void sat_add_implications_for_not_to_matrix(
+    sat_imp_matrix      * matrix,
+    sat_expression_node * toadd
+) {
+    assert(toadd -> node_type == SAT_EXPRESSION_NODE);
+    assert(toadd -> op_type == SAT_OP_NOT);
+
+    sat_var_idx var_a = toadd -> ir -> uid;
+    sat_var_idx var_b = toadd -> node.unary_operands.rhs -> ir -> uid;
+
+    sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
+    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
+
+    // Implications for a NOT operation.
+    sat_set_imp_matrix_cell(a_to_b, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
+    sat_set_imp_matrix_cell(b_to_a, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
+}
+
+
+/*!
+@brief Adds all implications for a AND expression to the matrix
+@param in matrix - The implication matrix to add entries too.
+@param in toadd - The expression to add implications for.
+*/
+void sat_add_implications_for_and_to_matrix(
+    sat_imp_matrix      * matrix,
+    sat_expression_node * toadd
+) {
+    assert(toadd -> node_type == SAT_EXPRESSION_NODE);
+    assert(toadd -> op_type == SAT_OP_AND);
+
+    sat_var_idx var_c = toadd -> ir -> uid;
+    sat_var_idx var_b = toadd -> node.binary_operands.rhs -> ir -> uid;
+    sat_var_idx var_a = toadd -> node.binary_operands.lhs -> ir -> uid;
+
+    sat_imp_matrix_cell * c_to_a = sat_get_imp_matrix_cell(matrix,var_c,var_a);
+    sat_imp_matrix_cell * c_to_b = sat_get_imp_matrix_cell(matrix,var_c,var_b);
+    sat_imp_matrix_cell * b_to_c = sat_get_imp_matrix_cell(matrix,var_b,var_c);
+    sat_imp_matrix_cell * a_to_c = sat_get_imp_matrix_cell(matrix,var_a,var_c);
+    
+    // Implications for an AND operation: c = a & b
+    sat_set_imp_matrix_cell(c_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
+    sat_set_imp_matrix_cell(c_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
+    sat_set_imp_matrix_cell(a_to_c,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    sat_set_imp_matrix_cell(b_to_c,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
+}
+
+
+/*!
+@brief Adds all implications for a or expression to the matrix
+@param in matrix - The implication matrix to add entries too.
+@param in toadd - The expression to add implications for.
+*/
+void sat_add_implications_for_or_to_matrix(
+    sat_imp_matrix      * matrix,
+    sat_expression_node * toadd
+) {
+    assert(toadd -> node_type == SAT_EXPRESSION_NODE);
+    assert(toadd -> op_type == SAT_OP_OR);
+
+    sat_var_idx var_c = toadd -> ir -> uid;
+    sat_var_idx var_b = toadd -> node.binary_operands.rhs -> ir -> uid;
+    sat_var_idx var_a = toadd -> node.binary_operands.lhs -> ir -> uid;
+
+    sat_imp_matrix_cell * c_to_a = sat_get_imp_matrix_cell(matrix,var_c,var_a);
+    sat_imp_matrix_cell * c_to_b = sat_get_imp_matrix_cell(matrix,var_c,var_b);
+    sat_imp_matrix_cell * b_to_c = sat_get_imp_matrix_cell(matrix,var_b,var_c);
+    sat_imp_matrix_cell * a_to_c = sat_get_imp_matrix_cell(matrix,var_a,var_c);
+
+    // Implications for an OR operation: c = a | b
+    sat_set_imp_matrix_cell(c_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    sat_set_imp_matrix_cell(c_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    sat_set_imp_matrix_cell(a_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
+    sat_set_imp_matrix_cell(b_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
+}
+
+
+/*!
+@brief Adds all implications for a leaf variable to the matrix
+@param in matrix - The implication matrix to add entries too.
+@param in toadd - The leaf expression to add implications for.
+*/
+void sat_add_implications_for_leaf_to_matrix(
+    sat_imp_matrix      * matrix,
+    sat_expression_node * toadd
+) {
+    assert(toadd -> node_type == SAT_EXPRESSION_LEAF);
+    assert(toadd -> op_type == SAT_OP_NONE);
+
+    sat_var_idx var_b = toadd ->  ir -> uid;
+    sat_var_idx var_a = toadd -> node.leaf_variable -> uid;
+
+    sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
+    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
+    
+    sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+}
+
+
+/*!
 @brief Adds an expression and all sub-expressions into the implication matrix.
 @param in depth - How deep is this nested expression? 0 indicates the root.
 */
@@ -350,17 +455,18 @@ void sat_add_expression_to_imp_matrix(
     sat_expression_node * toadd
 ) {
     
-    // We don't need to handle this kind of node.
     if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
+        sat_add_implications_for_leaf_to_matrix(matrix,toadd);
         return;
     }
 
-    if(toadd -> op_type == SAT_OP_NOT) {
+    else if(toadd -> op_type == SAT_OP_NOT) {
 
         // We need to handle a UNARY operation.
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.unary_operands.rhs);
-    
+
+        sat_add_implications_for_not_to_matrix(matrix,toadd);
 
     } else if (toadd -> op_type == SAT_OP_AND) {
 
@@ -369,7 +475,8 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
-    
+
+        sat_add_implications_for_and_to_matrix(matrix,toadd);
 
     } else if (toadd -> op_type == SAT_OP_OR) {
 
@@ -379,6 +486,7 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
     
+        sat_add_implications_for_or_to_matrix(matrix,toadd);
 
     } else if (toadd -> op_type == SAT_OP_XOR) {
 
@@ -427,4 +535,12 @@ void sat_add_assignment_to_imp_matrix(
     sat_add_expression_to_imp_matrix(0,matrix, toadd -> expression);
     
     // Now add the implications for the variable being assigned to.
+    sat_var_idx var_b = toadd -> variable -> uid;
+    sat_var_idx var_a = toadd -> expression -> ir -> uid;
+
+    sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
+    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
+    
+    sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
 }

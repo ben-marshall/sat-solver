@@ -24,7 +24,7 @@ typedef char * sat_var_name;
 typedef enum {
     BITOP_SET = 1,
     BITOP_CLEAR = 2,
-    BITOP_IGNORE = 0,
+    BITOP_IGN    = 0,
     BITOP_TOGGLE = 3
 } t_sat_bitop;
 
@@ -51,6 +51,8 @@ typedef enum {
 @see t_sat_bool
 */
 typedef struct s_sat_imp_matrix_cell {
+    sat_var_idx implyer;
+    sat_var_idx implyee;
     t_sat_bool  a_imp_b   : 1; //!< If A, then B is implied
     t_sat_bool  a_imp_nb  : 1; //!< If A, then not B is implied
     t_sat_bool  na_imp_b  : 1; //!< If not A, then B is implied
