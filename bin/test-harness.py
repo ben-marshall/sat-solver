@@ -10,12 +10,10 @@ def main():
     Main program for the test harness.
     """
 
-    variable_set = range(2,random.randint(10,1000))
+    variable_set = ["v_%d" % i for i in range(2,random.randint(10,100))]
     num_variables= len(variable_set)
-    num_relations= random.randint(1, (num_variables ** 2)/2)
-
-    print("Variables: %d" % num_variables)
-    print("Relations: %d" % num_relations)
+    stop = int((2+(num_variables ** 2))/2)
+    num_relations= random.randint(2, stop)
 
     ops = ["|", "&","~"]
 
@@ -35,7 +33,7 @@ def main():
 
     for c in ta:
         print(c)
-    print("END")
+    print("end")
 
 
 if(__name__=="__main__"):

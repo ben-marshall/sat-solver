@@ -106,8 +106,8 @@ void sat_set_imp_matrix_cell(
 ) {
     assert(cell != NULL);
 
-    printf("(%d,%d) - %d %d %d %d\n", cell -> implyer, cell -> implyee,
-        a_imp_b, a_imp_nb, na_imp_b, na_imp_nb);
+    //printf("(%d,%d) - %d %d %d %d\n", cell -> implyer, cell -> implyee,
+    //    a_imp_b, a_imp_nb, na_imp_b, na_imp_nb);
 
     switch (a_imp_b) {
         case BITOP_SET:     cell -> a_imp_b = 1; break;
@@ -292,7 +292,7 @@ void sat_propagate_imp_matrix(
 
         for(imp_b = 0; imp_b < matrix -> variable_count ; imp_b += 1) {
             
-            printf("."); fflush(stdout);
+            //printf("."); fflush(stdout);
 
             sat_imp_matrix_cell* a_on_b = sat_get_imp_matrix_cell(matrix,
                                                         imp_a,imp_b);
@@ -323,7 +323,7 @@ void sat_propagate_imp_matrix(
             }
 
         }
-        printf("\n"); fflush(stdout);
+        //printf("\n"); fflush(stdout);
     }
 
 }

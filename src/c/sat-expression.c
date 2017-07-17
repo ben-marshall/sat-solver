@@ -179,7 +179,7 @@ sat_expression_node * sat_new_expression_node (
         char * varname = sat_expression_var_id_to_name(yy_id_counter+1);
         tr -> ir = sat_new_named_expression_variable(varname);
 
-        printf("Expression node: %d - %s\n", node_type, varname);
+        //printf("Expression node: %d - %s\n", node_type, varname);
 
         return tr;
     }
