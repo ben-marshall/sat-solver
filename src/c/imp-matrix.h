@@ -127,6 +127,17 @@ void sat_free_imp_matrix(
 );
 
 
+
+/*!
+@brief Propagates all implications through the matrix from leaf expressions
+to roots.
+@param in matrix - Pointer to the implication matrix to perform propagation on.
+*/
+void sat_propagate_imp_matrix(
+    sat_imp_matrix * matrix
+);
+
+
 /*!
 @brief Allocates a new sat_consistancy_check object.
 @param [in] is_consistant - Was the checked matrix consistant?

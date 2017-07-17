@@ -106,7 +106,8 @@ void sat_set_imp_matrix_cell(
 ) {
     assert(cell != NULL);
 
-    printf("%d %d %d %d\n", a_imp_b, a_imp_nb, na_imp_b, na_imp_nb);
+    printf("(%d,%d) - %d %d %d %d\n", cell -> implyer, cell -> implyee,
+        a_imp_b, a_imp_nb, na_imp_b, na_imp_nb);
 
     switch (a_imp_b) {
         case BITOP_SET:     cell -> a_imp_b = 1; break;
@@ -208,7 +209,6 @@ inline t_sat_bool sat_check_imp_matrix_cell (
 }
 
 
-
 /*!
 @warning
 - Asserts that imp_mat != NULL
@@ -247,4 +247,34 @@ sat_consistancy_check * sat_check_imp_matrix (
     }
 
     return tr;
+}
+
+
+
+
+/*!
+@brief Propagates all implications through the matrix from leaf expressions
+to roots.
+@param in matrix - Pointer to the implication matrix to perform propagation on.
+*/
+void sat_propagate_imp_matrix(
+    sat_imp_matrix * matrix
+){
+    sat_var_idx imp_a;
+    sat_var_idx imp_b;
+    unsigned long row_offset;
+
+    for(imp_a = 0; imp_a < matrix -> variable_count ; imp_a += 1) {
+        row_offset = imp_a * matrix -> variable_count;
+
+        for(imp_b = 0; imp_b < matrix -> variable_count ; imp_b += 1) {
+            printf("."); fflush(stdout);
+    
+            unsigned long index = row_offset  + imp_b;
+            sat_imp_matrix_cell cell = matrix -> cells[index];
+
+        }
+        printf("\n"); fflush(stdout);
+    }
+
 }

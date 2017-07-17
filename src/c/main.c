@@ -87,7 +87,12 @@ int main (int argc, char ** argv)
     }
     
     printf("[DONE]\n");
-    printf("Checking Consistancy... "); fflush(stdout);
+    printf("Propagating Implications...     "); fflush(stdout);
+
+    sat_propagate_imp_matrix(imp_matrix);
+
+    printf("[DONE]\n");
+    printf("Checking Consistancy...         "); fflush(stdout);
 
     result = sat_check_imp_matrix(imp_matrix,1);
     printf("[DONE]\n");
