@@ -73,9 +73,12 @@ sat_expression_variable * sat_new_named_expression_variable(
 /*!
 @brief Free the memory taken up by an expression variable.
 @param in tofree    - Pointer to the variable to free.
+@param in freelist  - Should we recursively free the *next field?
+@note Also frees the memory allocated for the name field of tofree.
 */
 void sat_free_expression_variable (
-    sat_expression_variable    * tofree
+    sat_expression_variable    * tofree,
+    t_sat_bool                   freelist
 );
 
 

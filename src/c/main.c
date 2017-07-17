@@ -86,6 +86,8 @@ int main (int argc, char ** argv)
     // Free the implication matrix
     sat_free_imp_matrix(imp_matrix);
 
+    // Free the expression variable list.
+    sat_free_expression_variable(yy_sat_variables,1);
 
     return 0;
 }
