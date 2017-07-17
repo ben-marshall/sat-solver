@@ -65,7 +65,7 @@ int main (int argc, char ** argv)
     printf("Total Variables: %d\n", variable_count);
 
     // Build the implication matrix
-    sat_imp_matrix * imp_matrix = sat_new_imp_matrix(20);
+    sat_imp_matrix * imp_matrix = sat_new_imp_matrix(variable_count);
 
     // Make sure the empty matrix is consistant first.
     sat_consistancy_check * result = sat_check_imp_matrix(imp_matrix,1);

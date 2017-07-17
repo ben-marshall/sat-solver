@@ -352,8 +352,6 @@ void sat_add_expression_to_imp_matrix(
     
     // We don't need to handle this kind of node.
     if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
-        printf("Leafnode %d (%s)\n", toadd -> node.leaf_variable -> uid ,
-                                     toadd -> node.leaf_variable -> name);
         return;
     }
 
@@ -363,8 +361,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.unary_operands.rhs);
     
-        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
-                                     toadd -> ir -> name);
 
     } else if (toadd -> op_type == SAT_OP_AND) {
 
@@ -374,8 +370,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
     
-        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
-                                     toadd -> ir -> name);
 
     } else if (toadd -> op_type == SAT_OP_OR) {
 
@@ -385,8 +379,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
     
-        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
-                                     toadd -> ir -> name);
 
     } else if (toadd -> op_type == SAT_OP_XOR) {
 
@@ -396,8 +388,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
     
-        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
-                                     toadd -> ir -> name);
 
     } else if (toadd -> op_type == SAT_OP_EQ) {
 
@@ -407,8 +397,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
     
-        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
-                                     toadd -> ir -> name);
 
     } else {
         
