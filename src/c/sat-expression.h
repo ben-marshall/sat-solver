@@ -24,6 +24,14 @@ typedef enum t_sat_expression_node_type {
 
 
 /*!
+@brief Returns the total number of leaf and intermediate variables in all
+parsed assignments.
+@returns unsigned integer.
+*/
+unsigned int sat_get_variable_count();
+
+
+/*!
 @brief Type representing a single variable within a binary expression.
 @details
     This structure represents named and implicit variables within a SAT
@@ -87,6 +95,7 @@ typedef struct t_sat_expression_node sat_expression_node;
 struct t_sat_expression_node {
     sat_expression_node_type    node_type; //!< Is this a node or a leaf?
     sat_operation               op_type;   //!< Which operation is the node?
+    sat_expression_variable  *  ir; //<! Intermediate result.
 
     /*!
         @brief Stores the data of the AST node depending on the node and

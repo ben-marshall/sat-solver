@@ -60,6 +60,10 @@ int main (int argc, char ** argv)
     fclose(yyin);
     yylex_destroy();
 
+    // How many variables are there?
+    unsigned int variable_count = sat_get_variable_count();
+    printf("Total Variables: %d\n", variable_count);
+
     // Build the implication matrix
     sat_imp_matrix * imp_matrix = sat_new_imp_matrix(20);
 

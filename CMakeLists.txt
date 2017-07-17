@@ -89,6 +89,7 @@ set(LIBRARY_SRC ${SRC_DIR}/imp-matrix.c
 )
 
 add_library(${LIBRARY_NAME} ${LIBRARY_SRC})
+target_link_libraries(${LIBRARY_NAME} m)
 
 set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
 

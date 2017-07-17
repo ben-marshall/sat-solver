@@ -1,4 +1,5 @@
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -8,6 +9,34 @@
 
 //! Incremented every time we declare a new ID.
 unsigned int yy_id_counter = 0;
+
+/*!
+@brief Returns the total number of leaf and intermediate variables in all
+parsed assignments.
+@returns unsigned integer.
+*/
+unsigned int sat_get_variable_count()
+{
+    return yy_id_counter;
+}
+
+
+/*!
+@brief Turns a number into a string to be used as an intermediate result
+expression variable name.
+@param in id - The number, usually the value of yy_id_counter;
+@returns a string with the number in the name and a prefix.
+*/
+char * sat_expression_var_id_to_name(unsigned int id) {
+    
+    size_t len = 3 + (int)(ceil(log10(id))+1);
+
+    char * tr = calloc(len, sizeof(char));
+    
+    sprintf(tr, "iv_%d", id);
+
+    return tr;
+}
 
 /*!
 @brief Create a new un-named SAT expression variable.
@@ -122,6 +151,11 @@ sat_expression_node * sat_new_expression_node (
     else
     {
         tr -> node_type = node_type;
+        
+        if( tr -> node_type == SAT_EXPRESSION_NODE) {
+            char * varname = sat_expression_var_id_to_name(yy_id_counter+1);
+            tr -> ir = sat_new_named_expression_variable(varname);
+        }
 
         return tr;
     }
@@ -131,7 +165,7 @@ sat_expression_node * sat_new_expression_node (
 /*!
 @brief Free the memory taken up by an expression node.
 @details Recursively fees this expression node and all sub-expression nodes,
-but leaves the leaf variables allocated for later use.
+but leaves the leaf and intermediate variables allocated for later use.
 @param in tofree    - Pointer to the expression node to free.
 */
 void sat_free_expression_node(
@@ -174,8 +208,7 @@ sat_expression_node * sat_new_leaf_expression_node (
     sat_expression_variable * variable
 ) {
     assert(variable != NULL);
-    sat_expression_node * tr = calloc(1, sizeof(sat_expression_node));
-    tr -> node_type = SAT_EXPRESSION_LEAF;
+    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_LEAF);
 
     if(tr == NULL)
     {
@@ -205,8 +238,7 @@ sat_expression_node * sat_new_unary_expression_node (
     assert(op_type == SAT_OP_NOT);
     assert(child   != NULL);
 
-    sat_expression_node * tr = calloc(1, sizeof(sat_expression_node));
-    tr -> node_type = SAT_EXPRESSION_NODE;
+    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE);
 
     if(tr == NULL)
     {
@@ -241,8 +273,7 @@ sat_expression_node * sat_new_binary_expression_node (
            op_type == SAT_OP_OR  ||
            op_type == SAT_OP_XOR );
 
-    sat_expression_node * tr = calloc(1, sizeof(sat_expression_node));
-    tr -> node_type = SAT_EXPRESSION_NODE;
+    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE);
 
     if(tr == NULL)
     {
@@ -332,6 +363,9 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.unary_operands.rhs);
     
+        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
+                                     toadd -> ir -> name);
+
     } else if (toadd -> op_type == SAT_OP_AND) {
 
         // Binary AND OP.
@@ -339,6 +373,9 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
+    
+        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
+                                     toadd -> ir -> name);
 
     } else if (toadd -> op_type == SAT_OP_OR) {
 
@@ -347,6 +384,9 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
+    
+        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
+                                     toadd -> ir -> name);
 
     } else if (toadd -> op_type == SAT_OP_XOR) {
 
@@ -355,6 +395,9 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
+    
+        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
+                                     toadd -> ir -> name);
 
     } else if (toadd -> op_type == SAT_OP_EQ) {
 
@@ -363,6 +406,9 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
+    
+        printf("I Node   %d (%s)\n", toadd -> ir -> uid ,
+                                     toadd -> ir -> name);
 
     } else {
         
