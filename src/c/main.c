@@ -97,8 +97,11 @@ int main (int argc, char ** argv)
     result = sat_check_imp_matrix(imp_matrix,1);
     printf("[DONE]\n");
 
+    t_sat_bool is_consistant;
+
     if(! result -> is_consistant) {
         printf("Error: Matrix not consistant.\n");
+        is_consistant = SAT_FALSE;
 
         sat_expression_variable * var_a = 
                       sat_get_variable_from_id(result -> first_failed_implyer);
@@ -113,6 +116,7 @@ int main (int argc, char ** argv)
 
     } else {
         printf("Matrix is consistant!\n");
+        is_consistant = SAT_TRUE;
     }
     free(result);
 
@@ -127,6 +131,10 @@ int main (int argc, char ** argv)
 
     // Free the expression variable list.
     sat_free_expression_variable(yy_sat_variables,1);
-
-    return 0;
+    
+    if(is_consistant) {
+        return 0;
+    } else {
+        return 1;
+    }
 }
