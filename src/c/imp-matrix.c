@@ -113,24 +113,28 @@ void sat_set_imp_matrix_cell(
         case BITOP_SET:     cell -> a_imp_b = 1; break;
         case BITOP_CLEAR:   cell -> a_imp_b = 0; break;
         case BITOP_TOGGLE:  cell -> a_imp_b = !(cell -> a_imp_b); break;
+        case BITOP_IGN:     break; // Do Nothing.
     }
 
     switch (a_imp_nb) {
         case BITOP_SET:     cell -> a_imp_nb = 1; break;
         case BITOP_CLEAR:   cell -> a_imp_nb = 0; break;
         case BITOP_TOGGLE:  cell -> a_imp_nb = !(cell -> a_imp_nb); break;
+        case BITOP_IGN:     break; // Do Nothing.
     }
 
     switch (na_imp_b) {
         case BITOP_SET:     cell -> na_imp_b = 1; break;
         case BITOP_CLEAR:   cell -> na_imp_b = 0; break;
         case BITOP_TOGGLE:  cell -> na_imp_b = !(cell -> na_imp_b); break;
+        case BITOP_IGN:     break; // Do Nothing.
     }
 
     switch (na_imp_nb) {
         case BITOP_SET:     cell -> na_imp_nb = 1; break;
         case BITOP_CLEAR:   cell -> na_imp_nb = 0; break;
         case BITOP_TOGGLE:  cell -> na_imp_nb = !(cell -> na_imp_nb); break;
+        case BITOP_IGN:     break; // Do Nothing.
     }
 
     return;
@@ -262,17 +266,17 @@ sat_imp_matrix_cell * ab,
 sat_imp_matrix_cell * bc,
 sat_imp_matrix_cell * ac
 ) {
-    ac -> a_imp_b   = ab -> a_imp_b  && bc -> a_imp_b   ||
-                      ab -> a_imp_nb && bc -> na_imp_b   ;
-
-    ac -> a_imp_nb  = ab -> a_imp_b  && bc -> a_imp_nb  ||
-                      ab -> a_imp_nb && bc -> na_imp_nb  ;
-
-    ac -> na_imp_b  = ab -> na_imp_b  && bc -> a_imp_b  ||
-                      ab -> na_imp_nb && bc -> na_imp_b  ;
-
-    ac -> na_imp_nb = ab -> na_imp_b  && bc -> a_imp_nb  ||
-                      ab -> na_imp_nb && bc -> na_imp_nb  ;
+    ac -> a_imp_b   = (ab -> a_imp_b  && bc -> a_imp_b   ) ||
+                      (ab -> a_imp_nb && bc -> na_imp_b  )  ;
+                                                         
+    ac -> a_imp_nb  = (ab -> a_imp_b  && bc -> a_imp_nb  ) ||
+                      (ab -> a_imp_nb && bc -> na_imp_nb )  ;
+                                                         
+    ac -> na_imp_b  = (ab -> na_imp_b  && bc -> a_imp_b  ) ||
+                      (ab -> na_imp_nb && bc -> na_imp_b )  ;
+                                                         
+    ac -> na_imp_nb = (ab -> na_imp_b  && bc -> a_imp_nb ) ||
+                      (ab -> na_imp_nb && bc -> na_imp_nb)  ;
 }
 
 

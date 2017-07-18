@@ -11,7 +11,6 @@
 
 #include "sat-expression.h"
 
-void yy_add_expression(sat_expression_node * toadd);
 int  yyerror          (const char          * s    );
 
 //! @note Declared in sat-expression.h
@@ -117,12 +116,6 @@ variable : TOK_ID {
 int yyerror (const char *s)
 {
       printf ("[PARSE ERROR] %s\n", s);
+      return 1;
 }
 
-
-/*!
-@brief Adds a new binary expression to the linked list yy_expressions
-*/
-void yy_add_expression(sat_expression_node * toadd)
-{
-}
