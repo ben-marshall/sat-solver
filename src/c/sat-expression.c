@@ -33,7 +33,7 @@ char * sat_expression_var_id_to_name(unsigned int id) {
 
     char * tr = calloc(len, sizeof(char));
     
-    sprintf(tr, "iv_%d", id);
+    sprintf(tr, "_iv%d", id);
 
     return tr;
 }

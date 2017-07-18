@@ -130,6 +130,23 @@ int main (int argc, char ** argv)
     sat_update_imp_matrix_domains(imp_matrix);
     printf("[DONE]\n");
 
+    sat_var_idx imp_a;
+    for(imp_a = 0; imp_a < imp_matrix -> variable_count ; imp_a += 1) {
+
+        sat_expression_variable * var = sat_get_variable_from_id(imp_a);
+
+        printf("%d \t %s \t- {", imp_a, var -> name);
+
+        if(imp_matrix -> d_0[imp_a]) {
+            printf(" 0 ");
+        }
+        if(imp_matrix -> d_1[imp_a]) {
+            printf(" 1 ");
+        }
+        printf("}\n");
+
+    }
+
     // ---- End of program. Clean up. --------
 
     // Free the assignment tree.

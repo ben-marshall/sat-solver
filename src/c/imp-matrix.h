@@ -159,6 +159,7 @@ void sat_update_imp_matrix_domains(
 );
 
 
+
 /*!
 @brief Allocates a new sat_consistancy_check object.
 @param [in] is_consistant - Was the checked matrix consistant?

@@ -367,7 +367,15 @@ void sat_update_imp_matrix_domains(
             }
 
             // If we get this far there is some relationship between A and B
-            
+            matrix -> d_0[imp_b] = 
+              !(( matrix -> d_0[imp_a]                        ) &&
+                ((a_on_b -> na_imp_nb && matrix -> d_0[imp_b] ) ||
+                ( a_on_b -> na_imp_b  && matrix -> d_1[imp_b]))) ;
+
+            matrix -> d_1[imp_b] = 
+              !(( matrix -> d_1[imp_a]                        ) &&
+                ((a_on_b -> a_imp_nb  && matrix -> d_0[imp_b] ) ||
+                ( a_on_b -> a_imp_b   && matrix -> d_1[imp_b]))) ;
 
         }
     }
