@@ -82,6 +82,17 @@ typedef struct s_sat_imp_matrix {
     @see sat_imp_matrix_cell
     */
     sat_imp_matrix_cell * cells;
+
+    /*!
+    @brief Array of booleans indicating if the i'th variable in the
+    implication matrix can be 0.
+    */
+    t_sat_bool          * d_0;
+    /*!
+    @brief Array of booleans indicating if the i'th variable in the
+    implication matrix can be 1.
+    */
+    t_sat_bool          * d_1;
 } sat_imp_matrix;
 
 
