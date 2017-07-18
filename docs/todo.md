@@ -14,8 +14,9 @@
 
 ### Implication Matrix
 - [X] Generate matrix based on size of expression tree
-- [ ] Inserting tree into matrix
-- [ ] Filling out of matrix from tree leaf to root.
+- [X] Inserting tree into matrix
+- [X] Filling out of matrix from tree leaf to root.
+- [ ] Variable domain computation
 
 ### Testing
 - [ ] Coverage build.
