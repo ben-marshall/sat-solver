@@ -16,3 +16,13 @@ setup:
 docs:
 	doxygen doxyfile
 	mkdocs build --clean --site-dir ./build/docs
+
+clean-tests:
+	rm -rf ./build/test_vectors
+	rm -rf ./build/test_logs
+
+test-vectors:
+	./bin/test-harness.py
+
+run-tests: test-vectors
+	./bin/run-tests.sh

@@ -5,14 +5,14 @@ import sys
 import random
 import subprocess
 
-def main():
+def new_test_vector(save_to):
     """
-    Main program for the test harness.
+    Create a new test vector and save it to the supplied file path.
     """
 
-    variable_set = ["v_%d" % i for i in range(2,random.randint(10,100))]
+    variable_set = ["v_%d" % i for i in range(2,random.randint(10,50))]
     num_variables= len(variable_set)
-    stop = int((2+(num_variables ** 2))/2)
+    stop = int((2+(num_variables ** 2)))
     num_relations= random.randint(2, stop)
 
     ops = ["|", "&","~"]
@@ -31,9 +31,28 @@ def main():
         else:
             ta.append("%s = %s %s %s"   % (assignee, var_lhs,op, var_rhs))
 
-    for c in ta:
-        print(c)
-    print("end")
+    with open(save_to,"w") as fh:
+        for c in ta:
+            fh.write(c+"\n")
+        fh.write("end\n")
+
+def main():
+    """
+    Main program for the test harness.
+    """
+
+    vector_folder = "./build/test_vectors"
+
+    if(not os.path.exists(vector_folder)):
+        os.mkdir(vector_folder)
+
+    print("Creating test vectors...")
+
+    for i in range(0,25):
+        filename = "%s/tv_%03d.txt" % (vector_folder,i)
+        new_test_vector(filename)
+    
+    print("Creating test vectors... [DONE]")
 
 
 if(__name__=="__main__"):
