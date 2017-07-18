@@ -1,18 +1,18 @@
 
-.PHONY: clean
+# Debug or release build?
+BUILD_TYPE=DEBUG
+
+# With or without coverage flags?
+WITH_COVERAGE=YES
+
 
 all:
 	$(MAKE) -C ./build
 
 setup:
 	cd ./build/ ; \
-    cmake ../
+    cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DWITH_COVERAGE=$(WITH_COVERAGE) ../
 
-clean:
-	$(MAKE) -C ./build clean
-
-code-docs:
+docs:
 	doxygen doxyfile
-
-project-docs:
 	mkdocs build --clean --site-dir ./build/docs

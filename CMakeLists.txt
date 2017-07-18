@@ -12,14 +12,22 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/c)
 message(STATUS "Source Root: ${SRC_DIR}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
-# ------------------------------------------------------------------------
+
+#
+# ------- Coverage Options -----------------------------------------------
+#
+
 
 option(WITH_COVERAGE "If YES, build the debug executable with coverage." NO)
 
 SET(COV_FLAGS_C     "-fprofile-arcs -ftest-coverage")
 SET(COV_FLAGS_LINK  "-fprofile-arcs -ftest-coverage")
 
-# ------------------------------------------------------------------------
+
+#
+# -------- Compilation Flags ---------------------------------------------
+#
+
 
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -W")
 SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_C_FLAGS_RELEASE}")
@@ -45,7 +53,11 @@ message(STATUS "Parser Link Flags Debug:   ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 message(STATUS "Parser Build Flags Release: ${CMAKE_C_FLAGS_RELEASE}")
 message(STATUS "Parser Link Flags Release: ${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
-# ------------------------------------------------------------------------
+
+#
+# --------- Flex and Bison Processing ------------------------------------
+#
+
 
 set(FLEX_IN    ${SRC_DIR}/parser/sat-expression-scanner.l)
 set(FLEX_OUT_C ${SRC_DIR}/parser/sat-expression-scanner.c)
@@ -74,7 +86,11 @@ add_custom_command(
     DEPENDS ${FLEX_OUT_H} ${BISON_IN}
 )
 
-# ------------------------------------------------------------------------
+
+#
+# -------- Library and Executable ----------------------------------------
+#
+
 
 set(LIBRARY_NAME    satsolver)
 set(EXECUTABLE_NAME sats)
@@ -95,3 +111,6 @@ set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
 
 add_executable(${EXECUTABLE_NAME} ${SRC_DIR}/main.c)
 target_link_libraries(${EXECUTABLE_NAME} ${LIBRARY_NAME})
+
+
+
