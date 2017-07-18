@@ -150,6 +150,16 @@ void sat_propagate_imp_matrix(
 
 
 /*!
+@brief Responsible for updating the domains of all variables in the 
+implication matrix to check which ones are satisfiable.
+@param in matrix - The implication matrix who's domains we will update.
+*/
+void sat_update_imp_matrix_domains(
+    sat_imp_matrix * matrix
+);
+
+
+/*!
 @brief Allocates a new sat_consistancy_check object.
 @param [in] is_consistant - Was the checked matrix consistant?
 @returns A pointer to the new object or NULL if the allocation fails.

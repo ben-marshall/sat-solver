@@ -86,14 +86,18 @@ int main (int argc, char ** argv)
         walker = walker -> next;
     }
     
+
     printf("[DONE]\n");
     printf("Propagating Implications...     "); fflush(stdout);
-
+    
+    // Propagate all implications from leaf inputs to roots of assignments.
     sat_propagate_imp_matrix(imp_matrix);
 
     printf("[DONE]\n");
     printf("Checking Consistancy...         "); fflush(stdout);
-
+    
+    // Check there are no obvious contradictions and that the matrix is
+    // consistant.
     result = sat_check_imp_matrix(imp_matrix,1);
     printf("[DONE]\n");
 
@@ -119,7 +123,12 @@ int main (int argc, char ** argv)
         is_consistant = SAT_TRUE;
     }
     free(result);
+    
+    printf("Checking Variable Domains...    "); fflush(stdout);
 
+    // Check which variables (if any) are satisfiable.
+    sat_update_imp_matrix_domains(imp_matrix);
+    printf("[DONE]\n");
 
     // ---- End of program. Clean up. --------
 

@@ -339,3 +339,36 @@ void sat_propagate_imp_matrix(
     }
 
 }
+
+
+
+/*!
+@brief Responsible for updating the domains of all variables in the 
+implication matrix to check which ones are satisfiable.
+@param in matrix - The implication matrix who's domains we will update.
+*/
+void sat_update_imp_matrix_domains(
+    sat_imp_matrix * matrix
+){
+    sat_var_idx imp_a;
+    sat_var_idx imp_b;
+
+    for(imp_a = 0; imp_a < matrix -> variable_count ; imp_a += 1) {
+
+        for(imp_b = 0; imp_b < matrix -> variable_count ; imp_b += 1) {
+
+            sat_imp_matrix_cell* a_on_b = sat_get_imp_matrix_cell(matrix,
+                                                        imp_a,imp_b);
+            
+            if(!(a_on_b -> a_imp_b     || a_on_b -> a_imp_nb ||
+                 a_on_b -> na_imp_nb   || a_on_b -> na_imp_b )) {
+                // No relationship between a and b, so continue.
+                continue;
+            }
+
+            // If we get this far there is some relationship between A and B
+            
+
+        }
+    }
+}
