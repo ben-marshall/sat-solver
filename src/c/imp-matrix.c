@@ -274,17 +274,17 @@ sat_imp_matrix_cell * ab,
 sat_imp_matrix_cell * bc,
 sat_imp_matrix_cell * ac
 ) {
-    ac -> a_imp_b   = (ab -> a_imp_b  && bc -> a_imp_b   ) ||
-                      (ab -> a_imp_nb && bc -> na_imp_b  )  ;
-                                                         
-    ac -> a_imp_nb  = (ab -> a_imp_b  && bc -> a_imp_nb  ) ||
-                      (ab -> a_imp_nb && bc -> na_imp_nb )  ;
-                                                         
-    ac -> na_imp_b  = (ab -> na_imp_b  && bc -> a_imp_b  ) ||
-                      (ab -> na_imp_nb && bc -> na_imp_b )  ;
-                                                         
-    ac -> na_imp_nb = (ab -> na_imp_b  && bc -> a_imp_nb ) ||
-                      (ab -> na_imp_nb && bc -> na_imp_nb)  ;
+    ac -> a_imp_b   = ac -> a_imp_b  || (ab -> a_imp_b  && bc -> a_imp_b   ) ||
+                                        (ab -> a_imp_nb && bc -> na_imp_b  )  ;
+
+    ac -> a_imp_nb  = ac -> a_imp_nb || (ab -> a_imp_b  && bc -> a_imp_nb  ) ||
+                                        (ab -> a_imp_nb && bc -> na_imp_nb )  ;
+
+    ac -> na_imp_b  = ac -> na_imp_b || (ab -> na_imp_b  && bc -> a_imp_b  ) ||
+                                        (ab -> na_imp_nb && bc -> na_imp_b )  ;
+
+    ac -> na_imp_nb = ac -> na_imp_nb|| (ab -> na_imp_b  && bc -> a_imp_nb ) ||
+                                        (ab -> na_imp_nb && bc -> na_imp_nb)  ;
 }
 
 
