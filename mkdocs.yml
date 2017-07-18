@@ -13,7 +13,12 @@ markdown_extensions:
 
 pages:
 - Overview: overview.md
-- Implication: implication-notes.md
+- Theory:
+    - AC-3 Algorithm: ac-3.md
+    - AC-3 Implementation: ac-3-implementation.md
+- Usage: usage.md
+- Notes:
+    - Implication: implication-notes.md
 - Todo List: todo.md
 
 
