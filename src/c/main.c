@@ -6,8 +6,8 @@
 #include "sat-expression.h"
 #include "satsolver.h"
 #include "imp-matrix.h"
-#include "parser/sat-expression-parser.h"
-#include "parser/sat-expression-scanner.h"
+#include "sat-expression-parser.h"
+#include "sat-expression-scanner.h"
 
 extern FILE *       yyin;
 

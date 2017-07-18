@@ -79,6 +79,7 @@ add_custom_command(
 #
 
 include_directories(AFTER ${CMAKE_CURRENT_SOURCE_DIR}/parser/)
+include_directories(AFTER ${CMAKE_CURRENT_BINARY_DIR}/)
 include_directories(AFTER ${CMAKE_CURRENT_SOURCE_DIR}/)
 
 set(LIBRARY_SRC ${CMAKE_CURRENT_SOURCE_DIR}/imp-matrix.c
