@@ -11,7 +11,7 @@ mkdir -p $OUTPUT_LOGS
 for TEST in $TEST_FILES 
 do
 
-    $BINARY $TEST_VECTORS/$TEST > $OUTPUT_LOGS/$TEST
+    $BINARY $TEST_VECTORS/$TEST | tee $OUTPUT_LOGS/$TEST
 
     RESULT=$?
     echo  "$TEST - $RESULT"

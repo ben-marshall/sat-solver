@@ -12,7 +12,7 @@ def new_test_vector(save_to):
 
     variable_set = ["v_%d" % i for i in range(2,random.randint(10,50))]
     num_variables= len(variable_set)
-    stop = int((2+(num_variables ** 2)))
+    stop = int((2+(num_variables ** 2))/4)
     num_relations= random.randint(2, stop)
 
     ops = ["|", "&","~"]
@@ -48,7 +48,7 @@ def main():
 
     print("Creating test vectors...")
 
-    for i in range(0,25):
+    for i in range(0,50):
         filename = "%s/tv_%03d.txt" % (vector_folder,i)
         new_test_vector(filename)
     
