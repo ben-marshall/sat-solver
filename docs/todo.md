@@ -24,5 +24,5 @@
 - [ ] Random Testing framework.
 
 ### Optimisation
-- [ ] Setup profiling run
-- [ ] OpenMP
+- [X] Setup profiling run
+- [X] OpenMP
