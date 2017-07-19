@@ -49,6 +49,7 @@ int main (int argc, char ** argv)
     double time_insert;     //<! Time taken inserting implications.
     double time_prop;       //<! Time taken propagating implications
     double time_check;      //<! Time taken checking consistancy
+    double time_domain;     //<! Time taken updating variable domains.
     double time_total;      //<! Total computation time.
 
     // Try to open the file containing the list of assignments we will
@@ -162,32 +163,33 @@ int main (int argc, char ** argv)
     }
     free(result);
     
-    //printf("Checking Variable Domains...    "); fflush(stdout);
+    printf("Checking Variable Domains...    "); fflush(stdout);
 
-    //// Check which variables (if any) are satisfiable.
-    // FIXME - Domain computation code is broken.
-    //sat_update_imp_matrix_domains(imp_matrix);
-    //printf("[DONE]\n");
+    // Check which variables (if any) are satisfiable.
+    gettimeofday(&timstr,NULL);
+    t_start=timstr.tv_sec+(timstr.tv_usec/1000000.0);
 
-    //sat_var_idx imp_a;
-    //for(imp_a = 0; imp_a < imp_matrix -> variable_count ; imp_a += 1) {
+    
+    gettimeofday(&timstr,NULL);
+    t_end=timstr.tv_sec+(timstr.tv_usec/1000000.0);
+    time_domain = t_end - t_start;
+    printf("[DONE]\n");
 
-    //    sat_expression_variable * var = sat_get_variable_from_id(imp_a);
-
-    //    printf("%d %d \t %s \t- {", imp_matrix -> is_input[imp_a],
-    //                                imp_a, var -> name);
-
-    //    if(imp_matrix -> d_0[imp_a]) {
-    //        printf(" 0 ");
-    //    }
-    //    if(imp_matrix -> d_1[imp_a]) {
-    //        printf(" 1 ");
-    //    }
-    //    printf("}\n");
-
-    //}
 
     // ---- End of program. Clean up. --------
+
+    time_total = time_parse  + time_alloc + 
+                 time_insert + time_prop  + time_check;
+  
+    printf("Perf - Parsing           %.6lf s\n", time_parse);
+    printf("Perf - Allocation        %.6lf s\n", time_alloc);
+    printf("Perf - Insertion         %.6lf s\n", time_insert);
+    printf("Perf - Propagation Time  %.6lf s\n", time_prop);
+    printf("Perf - Propagation Count %d\n", imp_matrix->propagation_count);
+    printf("Perf - Propagation Rate  %.6lf p/s\n", (double)imp_matrix->propagation_count/time_prop);
+    printf("Perf - Checking          %.6lf s\n", time_check);
+    printf("Perf - Domain Update     %.6lf s\n", time_domain);
+    printf("Perf - Total Time        %.6lf s\n", time_total);
 
     // Free the assignment tree.
     sat_free_assignment(yy_assignments, 1);
@@ -197,16 +199,6 @@ int main (int argc, char ** argv)
 
     // Free the expression variable list.
     sat_free_expression_variable(yy_sat_variables,1);
-
-    time_total = time_parse  + time_alloc + 
-                 time_insert + time_prop  + time_check;
-  
-    printf("Perf - Parsing    \t\t%.6lf (s)\n", time_parse);
-    printf("Perf - Allocation \t\t%.6lf (s)\n", time_alloc);
-    printf("Perf - Insertion  \t\t%.6lf (s)\n", time_insert);
-    printf("Perf - Propagation\t\t%.6lf (s)\n", time_prop);
-    printf("Perf - Checking   \t\t%.6lf (s)\n", time_check);
-    printf("Perf - Total Time \t\t%.6lf (s)\n", time_total);
     
     if(is_consistant) {
         return 0;

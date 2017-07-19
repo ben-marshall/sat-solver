@@ -79,3 +79,5 @@ foreach variable x in X
     if D(x) == {}
         x is not satisfiable
 ```
+
+---

@@ -336,6 +336,7 @@ void sat_propagate_imp_matrix(
                 sat_imp_matrix_cell* a_on_c = sat_get_imp_matrix_cell(matrix,
                                                         imp_a,imp_c);
                 
+                matrix -> propagation_count++;
                 sat_propagate_abc(a_on_b, b_on_c, a_on_c);
             }
 
@@ -345,63 +346,3 @@ void sat_propagate_imp_matrix(
 
 }
 
-
-
-/*!
-@brief Responsible for updating the domains of all variables in the 
-implication matrix to check which ones are satisfiable.
-@param in matrix - The implication matrix who's domains we will update.
-*/
-void sat_update_imp_matrix_domains(
-    sat_imp_matrix * matrix
-){
-    sat_var_idx imp_a;
-    sat_var_idx imp_b;
-
-#pragma omp parallel for num_threads(2) default(shared) schedule(guided)
-    for(imp_a = 0; imp_a < matrix -> variable_count ; imp_a += 1) {
-
-        for(imp_b = 0; imp_b < matrix -> variable_count ; imp_b += 1) {
-
-            sat_imp_matrix_cell* a_on_b = sat_get_imp_matrix_cell(matrix,
-                                                        imp_a,imp_b);
-            
-            if(!(a_on_b -> a_imp_b     || a_on_b -> a_imp_nb ||
-                 a_on_b -> na_imp_nb   || a_on_b -> na_imp_b )) {
-                // No relationship between a and b, so continue.
-                continue;
-            }
-
-            if(matrix -> is_input[imp_b]) {
-                // Inputs have no restrictions on their domains.
-                continue;
-            }
-            
-            // If we get this far there is some relationship between A and B
-
-            t_sat_bool a0    = matrix -> d_0[imp_a];
-            t_sat_bool a1    = matrix -> d_1[imp_a];
-
-            t_sat_bool b0    = matrix -> d_0[imp_b];
-            t_sat_bool b1    = matrix -> d_1[imp_b];
-
-            t_sat_bool a_b   = a_on_b -> a_imp_b;
-            t_sat_bool na_b  = a_on_b -> na_imp_b;
-            t_sat_bool a_nb  = a_on_b -> a_imp_nb;
-            t_sat_bool na_nb = a_on_b -> na_imp_nb;
-
-            // Variable B can take the value zero, iff:
-            matrix -> d_0[imp_b] = 
-                (a0 && na_nb) || // A=0 and ~A->~B
-                (a1 && a_nb ) || // A=1 and A->~B
-                b0             ; // B can already be 0.
-
-            // Variable B can take the value one iff:
-            matrix -> d_1[imp_b] = 
-                (a0 && na_b ) || // A=0 and ~A->B
-                (a1 && a_b  ) || // A=1 and A->B
-                b1             ; // B can already be 0.
-
-        }
-    }
-}

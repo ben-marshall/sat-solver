@@ -69,6 +69,11 @@ typedef struct s_sat_imp_matrix {
     
     //! The number of variables the matrix holds relations for.
     unsigned int    variable_count;
+    
+    //! How many implications were explicitly added to the matrix?
+    unsigned int    implication_count;
+    //! How many implications were propagated through the matrix?
+    unsigned int    propagation_count;;
 
     //! How many cells are in the matrix. Equal to variable_count**2
     size_t          cell_count;
@@ -153,16 +158,6 @@ to roots.
 @param in matrix - Pointer to the implication matrix to perform propagation on.
 */
 void sat_propagate_imp_matrix(
-    sat_imp_matrix * matrix
-);
-
-
-/*!
-@brief Responsible for updating the domains of all variables in the 
-implication matrix to check which ones are satisfiable.
-@param in matrix - The implication matrix who's domains we will update.
-*/
-void sat_update_imp_matrix_domains(
     sat_imp_matrix * matrix
 );
 

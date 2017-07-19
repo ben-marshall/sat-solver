@@ -387,6 +387,8 @@ void sat_add_implications_for_not_to_matrix(
     // Implications for a NOT operation.
     sat_set_imp_matrix_cell(a_to_b, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
     sat_set_imp_matrix_cell(b_to_a, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
+
+    matrix -> implication_count += 2;
 }
 
 
@@ -416,6 +418,8 @@ void sat_add_implications_for_and_to_matrix(
     sat_set_imp_matrix_cell(c_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
     sat_set_imp_matrix_cell(a_to_c,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
     sat_set_imp_matrix_cell(b_to_c,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
+
+    matrix -> implication_count += 4;
 }
 
 
@@ -445,6 +449,8 @@ void sat_add_implications_for_or_to_matrix(
     sat_set_imp_matrix_cell(c_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
     sat_set_imp_matrix_cell(a_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
     sat_set_imp_matrix_cell(b_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
+
+    matrix -> implication_count += 4;
 }
 
 
@@ -468,6 +474,8 @@ void sat_add_implications_for_leaf_to_matrix(
     
     sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
     sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+
+    matrix -> implication_count += 2;
 }
 
 
