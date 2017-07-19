@@ -6,7 +6,7 @@ BUILD_TYPE=DEBUG
 WITH_COVERAGE=NO
 
 # Include gprof support?
-WITH_GPROF=YES
+WITH_GPROF=NO
 
 # Include OpenMP support?
 WITH_OPENMP=YES
