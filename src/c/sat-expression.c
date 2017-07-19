@@ -567,4 +567,7 @@ void sat_add_assignment_to_imp_matrix(
     
     sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
     sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+
+    // Mark the variable being assigned to as not an input to the system.
+    matrix -> is_input[toadd -> variable -> uid] = SAT_FALSE;
 }

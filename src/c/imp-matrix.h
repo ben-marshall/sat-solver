@@ -88,11 +88,19 @@ typedef struct s_sat_imp_matrix {
     implication matrix can be 0.
     */
     t_sat_bool          * d_0;
+    
     /*!
     @brief Array of booleans indicating if the i'th variable in the
     implication matrix can be 1.
     */
     t_sat_bool          * d_1;
+    
+    /*!
+    @brief Array of booleans indicating if the i'th variable in the
+    matrix is an input to the system - i.e. does not appear on the LHS
+    of an assignment.
+    */
+    t_sat_bool          * is_input;
 } sat_imp_matrix;
 
 

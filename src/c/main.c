@@ -135,7 +135,8 @@ int main (int argc, char ** argv)
 
         sat_expression_variable * var = sat_get_variable_from_id(imp_a);
 
-        printf("%d \t %s \t- {", imp_a, var -> name);
+        printf("%d %d \t %s \t- {", imp_matrix -> is_input[imp_a],
+                                    imp_a, var -> name);
 
         if(imp_matrix -> d_0[imp_a]) {
             printf(" 0 ");

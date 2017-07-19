@@ -40,13 +40,18 @@ sat_imp_matrix * sat_new_imp_matrix(
                                         variable_count,
                                         sizeof(t_sat_bool)
                                       );
+        to_return -> is_input       = calloc(
+                                        variable_count,
+                                        sizeof(t_sat_bool)
+                                      );
         
         // Initially, all variables can be 0 or 1 -> they have the full
         // domain available to them.
         unsigned int i = 0;
         for(i = 0; i < variable_count; i ++) {
-            to_return -> d_0[i] = SAT_TRUE;
-            to_return -> d_1[i] = SAT_TRUE;
+            to_return -> d_0[i]     = SAT_TRUE;
+            to_return -> d_1[i]     = SAT_TRUE;
+            to_return -> is_input[i]= SAT_TRUE;
         }
 
         return to_return;
@@ -66,9 +71,10 @@ void sat_free_imp_matrix(
 
     if(imp_mat -> cells != NULL) {
 
-        free (imp_mat -> cells);
-        free (imp_mat -> d_0  );
-        free (imp_mat -> d_1  );
+        free (imp_mat -> cells   );
+        free (imp_mat -> d_0     );
+        free (imp_mat -> d_1     );
+        free (imp_mat -> is_input);
 
     }
 
