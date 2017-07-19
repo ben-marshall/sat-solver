@@ -91,6 +91,9 @@ all: $(FLEX_HOUT) $(FLEX_COUT) $(BISON_OUT) $(OBJ_FILES) $(BIN_FILE)
 setup:
 	mkdir -pf $(BUILD_ROOT)
 
+clean: clean-tests
+	rm -rf ./build* gmon.out
+
 #-----------------------------------------------------------------------------
 
 #
