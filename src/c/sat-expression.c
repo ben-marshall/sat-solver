@@ -69,6 +69,7 @@ sat_expression_variable * sat_new_named_expression_variable(
 ){
     // Check if a variable with this name already exists.
     sat_expression_variable * walker = yy_sat_variables;
+    sat_expression_variable * prev   = walker;
 
     if(walker == NULL) {
 
@@ -89,8 +90,8 @@ sat_expression_variable * sat_new_named_expression_variable(
         } else if (result < 0) {
 
             sat_expression_variable * tr = sat_new_expression_variable();
-            tr     -> next = walker -> next;
-            walker -> next = tr;
+            tr     -> next = prev -> next;
+            prev   -> next = tr;
             tr     -> name = name;
             return tr;
 
@@ -102,6 +103,7 @@ sat_expression_variable * sat_new_named_expression_variable(
             return tr;
 
         } else {
+            prev   = walker;
             walker = walker -> next;
         }
     }
@@ -479,6 +481,12 @@ void sat_add_expression_to_imp_matrix(
     sat_expression_node * toadd
 ) {
     
+    // Mark the intermediate variable being assigned to as not an 
+    // input to the system.
+    matrix -> is_input[toadd -> ir -> uid] = SAT_FALSE;
+    matrix -> d_0[toadd -> ir -> uid] = SAT_FALSE;
+    matrix -> d_1[toadd -> ir -> uid] = SAT_FALSE;
+    
     if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
         sat_add_implications_for_leaf_to_matrix(matrix,toadd);
         return;
@@ -570,4 +578,6 @@ void sat_add_assignment_to_imp_matrix(
 
     // Mark the variable being assigned to as not an input to the system.
     matrix -> is_input[toadd -> variable -> uid] = SAT_FALSE;
+    matrix -> d_0[toadd -> variable -> uid] = SAT_FALSE;
+    matrix -> d_1[toadd -> variable -> uid] = SAT_FALSE;
 }
