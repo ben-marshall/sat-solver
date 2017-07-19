@@ -3,7 +3,15 @@
 BUILD_TYPE=DEBUG
 
 # With or without coverage flags?
-WITH_COVERAGE=YES
+WITH_COVERAGE=NO
+
+# Include gprof support?
+WITH_GPROF=YES
+
+# Include OpenMP support?
+WITH_OPENMP=YES
+
+#-----------------------------------------------------------------------------
 
 # Root directory we do all compilation in.
 BUILD_ROOT=./build
@@ -36,6 +44,42 @@ BIN_FILE=$(BUILD_ROOT)/sats
 CC=gcc
 
 CFLAGS+=-Wall $(INC_DIRS)
+
+#-----------------------------------------------------------------------------
+
+# Building for debug or release?
+ifeq ("$(BUILD_TYPE)" , "DEBUG")
+    CFLAGS+=-g -O0
+else ifeq ("$(BUILD_TYPE)" , "RELEASE")
+    CFLAGS+=-O2
+else
+    $(error BUILD_TYPE must be 'DEBUG' or 'RELEASE'. Got '$(BUILD_TYPE)')
+endif
+
+# Build with coverage collection support?
+ifeq ("$(WITH_COVERAGE)" , "YES")
+    CFLAGS+=--coverage -O0
+else ifeq ("$(WITH_COVERAGE)" , "NO")
+else
+    $(error WITH_COVERAGE must be 'YES' or 'NO'. Got '$(WITH_COVERAGE)')
+endif
+
+# Build with OpenMP Support?
+ifeq ("$(WITH_OPENMP)" , "YES")
+    CFLAGS+=-fopenmp
+else ifeq ("$(WITH_OPENMP)" , "NO")
+else
+    $(error WITH_OPENMP must be 'YES' or 'NO'. Got '$(WITH_OPENMP)')
+endif
+
+# Build with profiling support?
+ifeq ("$(WITH_GPROF)" , "YES")
+    CFLAGS+=-pg
+else ifeq ("$(WITH_GPROF)" , "NO")
+else
+    $(error WITH_GPROF must be 'YES' or 'NO'. Got '$(WITH_GPROF)')
+endif
+
 
 #-----------------------------------------------------------------------------
 
