@@ -578,6 +578,4 @@ void sat_add_assignment_to_imp_matrix(
 
     // Mark the variable being assigned to as not an input to the system.
     matrix -> is_input[toadd -> variable -> uid] = SAT_FALSE;
-    matrix -> d_0[toadd -> variable -> uid] = SAT_FALSE;
-    matrix -> d_1[toadd -> variable -> uid] = SAT_FALSE;
 }
