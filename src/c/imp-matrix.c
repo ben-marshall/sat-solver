@@ -319,6 +319,7 @@ void sat_propagate_imp_matrix(
                 continue;
             }
             
+#pragma omp parallel for num_threads(2) default(shared) schedule(guided)
             for(imp_c = 0; imp_c < matrix -> variable_count ; imp_c += 1) {
             
 
@@ -357,6 +358,7 @@ void sat_update_imp_matrix_domains(
     sat_var_idx imp_a;
     sat_var_idx imp_b;
 
+#pragma omp parallel for num_threads(2) default(shared) schedule(guided)
     for(imp_a = 0; imp_a < matrix -> variable_count ; imp_a += 1) {
 
         for(imp_b = 0; imp_b < matrix -> variable_count ; imp_b += 1) {
