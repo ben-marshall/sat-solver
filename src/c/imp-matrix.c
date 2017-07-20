@@ -411,41 +411,45 @@ t_sat_bool sat_arc_reduce(
 
     sat_imp_matrix_cell * rel = sat_get_imp_matrix_cell(matrix,var_a, var_b);
 
-    if(rel -> checked) {
-        return 0;
-    } else {
-        rel -> checked = SAT_TRUE;
-    }
-
     t_sat_bool  a_b   = rel -> a_imp_b  ;
     t_sat_bool  a_nb  = rel -> a_imp_nb ;
     t_sat_bool  na_b  = rel -> na_imp_b ;
     t_sat_bool  na_nb = rel -> na_imp_nb;
 
-    if(a_b || a_nb || na_b || na_nb) 
-    {
+    t_sat_bool  a0    = matrix -> d_0[var_a];
+    t_sat_bool  a1    = matrix -> d_1[var_a];
 
-        t_sat_bool  a0    = matrix -> d_0[var_a];
-        t_sat_bool  a1    = matrix -> d_1[var_a];
+    t_sat_bool  b0    = matrix -> d_0[var_b];
+    t_sat_bool  b1    = matrix -> d_1[var_b];
 
-        t_sat_bool  b0    = matrix -> d_0[var_b];
-        t_sat_bool  b1    = matrix -> d_1[var_b];
-
-        matrix -> d_0[var_a] =
-            (a0 && na_nb && b0) ||
-            (a0 && na_b  && b1)  ;
-        
-        matrix -> d_1[var_a] =
-            (a1 && a_nb && b0) ||
-            (a1 && a_b  && b1)  ;
-
-        t_sat_bool delta = (matrix -> d_0[var_a] != a0) ||
-                           (matrix -> d_1[var_a] != a1)  ;
-
-        printf("Checking %d -> %d : %d\n", var_a, var_b, delta);
-
+    t_sat_bool delta = SAT_FALSE;
+    
+    if(a_b) {
+        if(!(a1 && b1)) {
+            matrix -> d_1[var_a] = 0;
+            delta = SAT_TRUE;
+        }
     }
-    return 0;
+    if(a_nb) {
+        if(!(a1 && b0)) {
+            matrix -> d_1[var_a] = 0;
+            delta = SAT_TRUE;
+        }
+    }
+    if(na_b) {
+        if(!(a0 && b1)) {
+            matrix -> d_0[var_a] = 0;
+            delta = SAT_TRUE;
+        }
+    }
+    if(na_nb) {
+        if(!(a0 && b0)) {
+            matrix -> d_0[var_a] = 0;
+            delta = SAT_TRUE;
+        }
+    }
+
+    return delta;
 }
 
 
@@ -465,13 +469,16 @@ t_sat_bool sat_solve(
     // Construct the initial list of relations to deal with.
     queue * worklist = queue_new();
     
-    sat_var_idx i = 0;
-    for(i = 0; i < matrix -> variable_count; i ++) {
-        // Add all relations start -> X where X is any other variable to the
-        // work list.
-        if(i != start ) {
-            sat_relation * toadd = sat_new_relation(start ,i);
-            queue_enqueue(worklist, (void*) toadd);
+    sat_var_idx a = 0;
+    sat_var_idx b = 0;
+    for(a = 0; a < matrix -> variable_count; a ++) {
+        for(b = 0; b < matrix -> variable_count; b ++) {
+        
+            if(a != b) {
+                sat_relation * toadd = sat_new_relation(a,b);
+                queue_enqueue(worklist, (void*) toadd);
+            }
+
         }
     }
 
@@ -502,7 +509,7 @@ t_sat_bool sat_solve(
                 
                 // We've checked all relations X -> Y for all variables Y.
                 // Now check Z -> X for all variables Z.
-
+                sat_var_idx i;
                 for(i = 0; i < matrix -> variable_count; i ++) {
                     if(i != var_y && i != var_x) {
                         sat_relation * toadd = sat_new_relation(i, var_x);

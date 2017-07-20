@@ -82,7 +82,6 @@ void sat_free_relation(
 typedef struct s_sat_imp_matrix_cell {
     sat_var_idx implyer;
     sat_var_idx implyee;
-    t_sat_bool  checked   : 1; //!< If A, then B is implied
     t_sat_bool  a_imp_b   : 1; //!< If A, then B is implied
     t_sat_bool  a_imp_nb  : 1; //!< If A, then not B is implied
     t_sat_bool  na_imp_b  : 1; //!< If not A, then B is implied

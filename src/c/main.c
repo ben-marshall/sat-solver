@@ -168,6 +168,7 @@ int main (int argc, char ** argv)
     // Check which variables (if any) are satisfiable.
     gettimeofday(&timstr,NULL);
     t_start=timstr.tv_sec+(timstr.tv_usec/1000000.0);
+
     
     sat_reset_variable_domains(imp_matrix, 1, 1);
     t_sat_bool sat_result = sat_solve(imp_matrix, 0);
