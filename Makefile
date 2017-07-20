@@ -32,6 +32,7 @@ INC_DIRS=-I$(SRC_ROOT) -I$(BUILD_ROOT)
 # Executable Source Files.
 SRC_FILES=$(FLEX_COUT) \
           $(BISON_OUT) \
+          $(BUILD_ROOT)/queue.c \
           $(BUILD_ROOT)/sat-expression.c \
           $(BUILD_ROOT)/imp-matrix.c \
           $(BUILD_ROOT)/main.c
