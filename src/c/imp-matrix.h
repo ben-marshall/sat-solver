@@ -151,6 +151,17 @@ void sat_free_imp_matrix(
 );
 
 
+/*!
+@brief Re-sets the possible domain values of all variables in a matrix to
+the specified value.
+@details Lets the same matrix be re-used for multiple SAT queries.
+*/
+void sat_reset_variable_domains(
+    sat_imp_matrix * matrix, //<! The matrix to set the domains for.
+    t_sat_bool       d_0,    //<! Should 0 be in the variable domains?
+    t_sat_bool       d_1     //<! Should 1 be in the variable domains?
+);
+
 
 /*!
 @brief Propagates all implications through the matrix from leaf expressions

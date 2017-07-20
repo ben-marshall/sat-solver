@@ -176,6 +176,30 @@ void sat_clear_imp_matrix(
 
 
 
+/*!
+@brief Re-sets the possible domain values of all variables in a matrix to
+the specified value.
+@details Lets the same matrix be re-used for multiple SAT queries.
+*/
+void sat_reset_variable_domains(
+    sat_imp_matrix * matrix, //<! The matrix to set the domains for.
+    t_sat_bool       d_0,    //<! Should 0 be in the variable domains?
+    t_sat_bool       d_1     //<! Should 1 be in the variable domains?
+){
+    assert(matrix != NULL);
+
+    sat_var_idx idx = 0;
+
+    #pragma omp parallel for num_threads(2) default(shared) schedule(guided)
+    for (idx = 0; idx < matrix -> variable_count; idx ++) {
+        
+        matrix -> d_0[idx] = d_0;
+        matrix -> d_1[idx] = d_1;
+
+    }
+}
+
+
 
 /*!
 @brief Allocates a new sat_consistancy_check object.
