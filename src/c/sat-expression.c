@@ -54,6 +54,8 @@ sat_expression_variable * sat_new_expression_variable( )
     {
         tr -> uid  = yy_id_counter ++;
         tr -> name = NULL;
+        tr -> can_be_0 = SAT_TRUE;
+        tr -> can_be_1 = SAT_TRUE;
         return tr;
     }
 }
@@ -485,6 +487,9 @@ void sat_add_implications_for_leaf_to_matrix(
     sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
     sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
 
+    matrix -> d_0[var_a] = toadd -> node.leaf_variable -> can_be_0;
+    matrix -> d_1[var_a] = toadd -> node.leaf_variable -> can_be_1;
+
     matrix -> implication_count += 2;
 }
 
@@ -502,8 +507,8 @@ void sat_add_expression_to_imp_matrix(
     // Mark the intermediate variable being assigned to as not an 
     // input to the system.
     matrix -> is_input[toadd -> ir -> uid] = SAT_FALSE;
-    matrix -> d_0[toadd -> ir -> uid] = SAT_FALSE;
-    matrix -> d_1[toadd -> ir -> uid] = SAT_FALSE;
+    matrix -> d_0[toadd -> ir -> uid] = SAT_TRUE;
+    matrix -> d_1[toadd -> ir -> uid] = SAT_TRUE;
     
     if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
         sat_add_implications_for_leaf_to_matrix(matrix,toadd);
@@ -596,4 +601,7 @@ void sat_add_assignment_to_imp_matrix(
 
     // Mark the variable being assigned to as not an input to the system.
     matrix -> is_input[toadd -> variable -> uid] = SAT_FALSE;
+
+    matrix -> d_0[var_a] = toadd -> variable -> can_be_0;
+    matrix -> d_1[var_a] = toadd -> variable -> can_be_1;
 }

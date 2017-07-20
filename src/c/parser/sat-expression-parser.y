@@ -19,10 +19,12 @@ extern sat_assignment * yy_assignments;
 %}
 
 /* BISON Declarations */
-%token TOK_DIGIT  
+%token TOK_ZERO
+%token TOK_ONE
 %token <vid> TOK_ID     
 %token TOK_END    
 %token TOK_ASSIGN 
+%token TOK_OP_NE  
 %token TOK_OP_EQ  
 %token TOK_OP_AND 
 %token TOK_OP_OR  
@@ -39,7 +41,7 @@ extern sat_assignment * yy_assignments;
 %type <expr>    expression
 %type <var>     variable
 %type <assign>  assignment
-%type <assign>  input
+%type <assign>  input_assignments
 %type <assign>  start
 
 %union {
@@ -53,15 +55,15 @@ extern sat_assignment * yy_assignments;
 /* Grammar follows */
 %%
 
-start : input TOK_END {
+start : input_assignments unary_constraints TOK_END {
     $$ = $1;
     yy_assignments = $$;
 }
 
-input:    /* empty string */ {
+input_assignments:    /* empty string */ {
     $$ = NULL;
 }
-| input assignment {
+| input_assignments assignment {
     $$ = $2;
     if ($1 != NULL)
     {
@@ -110,6 +112,31 @@ expression_unary :
 variable : TOK_ID {
     $$ = sat_new_named_expression_variable($1);
 };
+
+unary_constraints : 
+| unary_constraint unary_constraints
+;
+
+unary_constraint  :
+    TOK_ID TOK_OP_EQ TOK_ZERO {
+        sat_expression_variable * var = sat_new_named_expression_variable($1);
+        var -> can_be_0 = SAT_TRUE;
+        var -> can_be_1 = SAT_FALSE;
+    }
+|   TOK_ID TOK_OP_EQ TOK_ONE  {
+        sat_expression_variable * var = sat_new_named_expression_variable($1);
+        var -> can_be_0 = SAT_FALSE;
+        var -> can_be_1 = SAT_TRUE;
+    }
+|   TOK_ID TOK_OP_NE TOK_ZERO {
+        sat_expression_variable * var = sat_new_named_expression_variable($1);
+        var -> can_be_0 = SAT_FALSE;
+    }
+|   TOK_ID TOK_OP_NE TOK_ONE {
+        sat_expression_variable * var = sat_new_named_expression_variable($1);
+        var -> can_be_1 = SAT_FALSE;
+    }
+;
 
 %%
 

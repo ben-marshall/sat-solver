@@ -14,13 +14,16 @@
 %option nodefault 
 %option noyywrap 
 
-DIGIT    [01]
 ID       [a-zA-Z][a-zA-Z_0-9]*
 
 END      end
 
 ASSIGN   =
 
+ZERO     0
+ONE      1
+
+OP_NE    !=
 OP_EQ    ==
 OP_AND   &
 OP_OR    \|
@@ -36,8 +39,12 @@ CB       \)
     return TOK_END;
 }
 
-{DIGIT} {
-    return TOK_DIGIT;
+{ZERO} {
+    return TOK_ZERO;
+}
+
+{ONE} {
+    return TOK_ONE;
 }
 
 {ID} {
@@ -52,6 +59,10 @@ CB       \)
 } 
 {CB} {
     return TOK_CB;
+}
+
+{OP_NE} {
+    return TOK_OP_NE;
 }
 
 {OP_EQ} {

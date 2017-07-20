@@ -50,6 +50,9 @@ struct t_sat_expression_variable {
     sat_var_idx     uid;    //!< Unique identifier of the variable.
     sat_var_name    name;   //!< Friendly name. 'a/b/c/d' in example above.
     sat_expression_variable * next; //!< Next in linked list of variables.
+
+    t_sat_bool      can_be_0; //<! Initial domain constraint on being zero
+    t_sat_bool      can_be_1; //<! Initial domain constraint on being one.
 } ;
 
 /*!
