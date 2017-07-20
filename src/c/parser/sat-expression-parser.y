@@ -33,8 +33,10 @@ extern sat_assignment * yy_assignments;
 %token TOK_OB     
 %token TOK_CB     
 
-%left TOK_OP_AND TOK_OP_OR TOK_OP_XOR TOK_OP_EQ
-%left TOK_NOT
+%left TOK_OP_OR
+%left TOK_OP_AND 
+%left TOK_OP_XOR
+%right TOK_NOT
 
 %type <expr>    expression_unary
 %type <expr>    expression_binary
@@ -78,15 +80,22 @@ assignment : variable TOK_ASSIGN expression {
 ;
 
 expression :
-    expression_unary {
+    TOK_OB expression_unary TOK_CB {
+    $$ = $2;
+    }
+|   TOK_OB expression_binary TOK_CB {
+    $$ = $2;
+    }
+|   expression_unary {
     $$ = $1;
-}
+    }
 |   expression_binary {
     $$ = $1;
-}
+    }
 |   variable {
     $$ = sat_new_leaf_expression_node($1);
-};
+    }
+;
 
 expression_binary : 
     expression TOK_OP_AND expression{

@@ -427,25 +427,25 @@ t_sat_bool sat_arc_reduce(
     if(a_b) {
         if(!(a1 && b1)) {
             matrix -> d_1[var_a] = 0;
-            delta = SAT_TRUE;
+            delta = a1;
         }
     }
     if(a_nb) {
         if(!(a1 && b0)) {
             matrix -> d_1[var_a] = 0;
-            delta = SAT_TRUE;
+            delta = delta || a1;
         }
     }
     if(na_b) {
         if(!(a0 && b1)) {
             matrix -> d_0[var_a] = 0;
-            delta = SAT_TRUE;
+            delta = delta || a0;
         }
     }
     if(na_nb) {
         if(!(a0 && b0)) {
             matrix -> d_0[var_a] = 0;
-            delta = SAT_TRUE;
+            delta = delta || a0;
         }
     }
 
@@ -504,6 +504,7 @@ t_sat_bool sat_solve(
                 
                 // Fail, the implyer has an empty domain!
                 result = SAT_FALSE;
+                return result;
 
             } else {
                 

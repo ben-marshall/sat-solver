@@ -36,11 +36,6 @@ void print_usage(char * command_line) {
 int main (int argc, char ** argv) 
 {
     printf("----------[SAT-Solver]----------\n");
-
-    if ( argc <= 1 ) {
-        print_usage(argv[0]);
-        return 1;
-    }
   
     struct timeval timstr;  //<! structure to hold elapsed time
     double t_start, t_end;  //<! used to calculate elapsed wallclock time
@@ -55,13 +50,25 @@ int main (int argc, char ** argv)
     // Try to open the file containing the list of assignments we will
     // parse.
 
-    char * input_file = argv[1];
-    printf("Parsing '%s' ", input_file); fflush(stdout);
-    yyset_in(fopen(input_file,"r"));
+    if(argc == 2)
+    {
+        char * input_file = argv[1];
+        if(input_file[0] == '-') {
+            yyset_in(stdin);
+        } else {
+            printf("Parsing '%s' ", input_file); fflush(stdout);
+            yyset_in(fopen(input_file,"r"));
 
-    if(yyin == NULL) {
-        printf("Error: Could not open input file '%s'\n", input_file);
-        return 1;
+            if(yyin == NULL) {
+                printf("Error: Could not open input file '%s'\n", input_file);
+                return 1;
+            }
+        }
+    }
+    else
+    {
+        // Read input from stdin
+        yyset_in(stdin);
     }
     
     gettimeofday(&timstr,NULL);

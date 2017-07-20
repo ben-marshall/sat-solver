@@ -101,11 +101,3 @@ arc_reduce(x,y) =
     return delta
 ```
 
-
-a = b & c
-
-a -> b
-a -> c
-
-~c -> ~a
-~b -> ~a
