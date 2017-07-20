@@ -162,11 +162,14 @@ void sat_free_expression_variable (
 /*!
 @brief Create a new sat_expression_node object with a given type.
 @param in node_type - Is this a leaf node (for a variable) or expression node?
+@param in ir - Intermediate result of the expression node. If NULL, a new one 
+                will be created anyway.
 @returns A pointer to a newly created sat_expression_node or NULL if the
 memory allocation fails.
 */
 sat_expression_node * sat_new_expression_node (
-    sat_expression_node_type    node_type
+    sat_expression_node_type    node_type,
+    sat_expression_variable   * ir
 ) {
     sat_expression_node * tr = calloc(1, sizeof(sat_expression_node));
 
@@ -178,8 +181,12 @@ sat_expression_node * sat_new_expression_node (
     {
         tr -> node_type = node_type;
         
-        char * varname = sat_expression_var_id_to_name(yy_id_counter+1);
-        tr -> ir = sat_new_named_expression_variable(varname);
+        if(ir == NULL) {
+            char * varname = sat_expression_var_id_to_name(yy_id_counter+1);
+            tr -> ir = sat_new_named_expression_variable(varname);
+        } else {
+            tr -> ir = ir;
+        }
 
         //printf("Expression node: %d - %s\n", node_type, varname);
 
@@ -234,7 +241,8 @@ sat_expression_node * sat_new_leaf_expression_node (
     sat_expression_variable * variable
 ) {
     assert(variable != NULL);
-    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_LEAF);
+    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_LEAF,
+                                                       variable);
 
     if(tr == NULL)
     {
@@ -264,7 +272,8 @@ sat_expression_node * sat_new_unary_expression_node (
     assert(op_type == SAT_OP_NOT);
     assert(child   != NULL);
 
-    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE);
+    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE,
+                                                       NULL);
 
     if(tr == NULL)
     {
@@ -299,7 +308,8 @@ sat_expression_node * sat_new_binary_expression_node (
            op_type == SAT_OP_OR  ||
            op_type == SAT_OP_XOR );
 
-    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE);
+    sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE,
+                                                       NULL);
 
     if(tr == NULL)
     {
