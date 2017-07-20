@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "queue.h"
 #include "satsolver.h"
 
 #ifndef H_IMP_MATRIX
@@ -29,6 +30,34 @@ typedef enum {
 } t_sat_bitop;
 
 //  ------------------ Data Structures -----------------------------------
+
+/*!
+@brief Stores two variable indicies, which indicate a relation between the
+two variables.
+*/
+typedef struct sat_relation_t {
+    sat_var_idx     implyer; //<! The variable on the LHS of the implication.
+    sat_var_idx     implyee; //<! The variable on the RHS of the implication.
+} sat_relation;
+
+
+/*!
+@brief Create a new relation.
+*/
+sat_relation * sat_new_relation(
+    sat_var_idx     implyer, //<! The variable on the LHS of the implication.
+    sat_var_idx     implyee  //<! The variable on the RHS of the implication.
+);
+
+
+/*!
+@brief Free a relation.
+*/
+void sat_free_relation(
+    sat_relation * tofree  //<! The relation to free.
+);
+
+
 
 /*!
 @brief Structure containing the the relationship between two variables in
@@ -260,6 +289,17 @@ of the inconsistant cells.
 sat_consistancy_check * sat_check_imp_matrix (
     sat_imp_matrix      * imp_mat,
     t_sat_bool            exit_on_first
+);
+
+
+/*!
+@brief Performs a SAT solving pass starting with the supplied variable.
+@param in matrix - The matrix to do the solving over.
+@param in var    - Variable index to start with.
+*/
+t_sat_bool sat_solve(
+    sat_imp_matrix * matrix,
+    sat_var_idx      start
 );
 
 #endif

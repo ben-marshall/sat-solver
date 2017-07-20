@@ -7,6 +7,32 @@
 
 
 /*!
+@brief Create a new relation.
+*/
+sat_relation * sat_new_relation(
+    sat_var_idx     implyer, //<! The variable on the LHS of the implication.
+    sat_var_idx     implyee  //<! The variable on the RHS of the implication.
+){
+    sat_relation * tr = calloc(1, sizeof(sat_relation));
+
+    tr -> implyer = implyer;
+    tr -> implyee = implyee;
+
+    return tr;
+}
+
+
+/*!
+@brief Free a relation.
+*/
+void sat_free_relation(
+    sat_relation * tofree  //<! The relation to free.
+){
+    free(tofree);
+}
+
+
+/*!
 @warning Asserts that variable_count > 0
 */
 sat_imp_matrix * sat_new_imp_matrix(
@@ -368,5 +394,138 @@ void sat_propagate_imp_matrix(
         //printf("\n"); fflush(stdout);
     }
 
+}
+
+
+/*!
+@brief Add all relations involving a particular variable to a worklist.
+@details
+- If on_implyer is true, then all relations (x, variable) are added
+  where variable is the supplied argument and x is all other variables.
+- If on_implyer is false, then all relations (variable, x) are added
+  where variable is the supplied argument and x is all other variables.
+*/
+void sat_solve_enqueue(
+    sat_imp_matrix  * matrix,
+    queue           * worklist,
+    t_sat_bool        on_implyer,
+    sat_var_idx       variable
+){
+    sat_var_idx i = 0;
+    for(i = 0; i < matrix -> variable_count; i ++) {
+        // Add all relations start -> X where X is any other variable to the
+        // work list.
+        if(i != variable) {
+            sat_relation * toadd;
+            if(on_implyer) {
+                toadd = sat_new_relation(i, variable);
+            } else {
+                toadd = sat_new_relation(variable,i);
+            }
+            queue_enqueue(worklist, (void*) toadd);
+        }
+    }
+    
+}
+
+
+/*!
+@brief Implements the arc-reduce function of AC-3
+@param in matrix - The matrix of variable to operate on.
+@param in relation - The two related variables to check.
+*/
+t_sat_bool sat_arc_reduce(
+    sat_imp_matrix * matrix,
+    sat_relation   * relation
+){
+    sat_var_idx var_a = relation -> implyer;
+    sat_var_idx var_b = relation -> implyee;
+
+    sat_imp_matrix_cell * rel = sat_get_imp_matrix_cell(matrix,var_a, var_b);
+
+    t_sat_bool  a_b   = rel -> a_imp_b  ;
+    t_sat_bool  a_nb  = rel -> a_imp_nb ;
+    t_sat_bool  na_b  = rel -> na_imp_b ;
+    t_sat_bool  na_nb = rel -> na_imp_nb;
+
+    if(a_b || a_nb || na_b || na_nb) 
+    {
+
+        t_sat_bool  a0    = matrix -> d_0[var_a];
+        t_sat_bool  a1    = matrix -> d_1[var_a];
+
+        t_sat_bool  b0    = matrix -> d_0[var_b];
+        t_sat_bool  b1    = matrix -> d_1[var_b];
+
+        matrix -> d_0[var_a] = 
+            (a0 && na_b  && b1) ||
+            (a0 && na_nb && b0)  ;
+        
+        matrix -> d_1[var_a] = 
+            (a1 && a_b   && b1) ||
+            (a1 && a_nb  && b0)  ;
+
+        return (a0 != matrix -> d_0[var_a]) || (a1 != matrix -> d_1[var_a]);
+    }
+    return 0;
+}
+
+
+/*!
+@brief Performs a SAT solving pass starting with the supplied variable.
+@param in matrix - The matrix to do the solving over.
+@param in var    - Variable index to start with.
+@returns True if the start variable is satisfiable, False if not.
+*/
+t_sat_bool sat_solve(
+    sat_imp_matrix * matrix,
+    sat_var_idx      start
+) {
+    
+    t_sat_bool result = SAT_TRUE;
+
+    // Construct the initial list of relations to deal with.
+    queue * worklist = queue_new();
+    sat_solve_enqueue(matrix, worklist, SAT_FALSE, start);
+
+    printf("Solve - Initial worklist size: %d\n", worklist -> length);
+    
+    // While the work list is not empty.
+    while (worklist -> length > 0) {
+
+        sat_relation * tocheck = (sat_relation*)queue_dequeue(worklist);
+
+        printf("Checking %d -> %d\n", tocheck -> implyer, tocheck -> implyee);
+        
+        t_sat_bool reduce_result = sat_arc_reduce(matrix, tocheck);
+
+        if(reduce_result) {
+            
+            // Check the domain of the implyer varible of the relation being
+            // checked.
+
+            if(!(matrix -> d_0[tocheck -> implyer] ||
+                 matrix -> d_1[tocheck -> implyer])) {
+                
+                // Fail, the implyer has an empty domain!
+                result = SAT_FALSE;
+
+            } else {
+                
+                // We've checked all relations X -> Y for all variables Y.
+                // Now check Z -> X for all variables Z.
+                sat_solve_enqueue(matrix, worklist, SAT_TRUE, 
+                                                        tocheck -> implyer);
+
+            }
+
+        }
+
+        sat_free_relation(tocheck);
+
+    }
+
+    return result;
+    
 }
 

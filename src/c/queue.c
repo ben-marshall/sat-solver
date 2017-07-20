@@ -89,6 +89,8 @@ void * queue_dequeue(
         void * tr = item_tr -> data;
         free(item_tr);
 
+        q -> length --;
+
         return tr;
 
     }

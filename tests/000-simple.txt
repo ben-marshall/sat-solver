@@ -1,6 +1,4 @@
 
 a = b & c
-w = x & y
-z = ~ k
 
 end

@@ -168,7 +168,19 @@ int main (int argc, char ** argv)
     // Check which variables (if any) are satisfiable.
     gettimeofday(&timstr,NULL);
     t_start=timstr.tv_sec+(timstr.tv_usec/1000000.0);
+    
+    sat_reset_variable_domains(imp_matrix, 1, 1);
+    t_sat_bool sat_result = sat_solve(imp_matrix, 0);
 
+    printf("SAT Solve Result: %d\n", sat_result);
+
+    sat_var_idx i = 0;
+    for(i = 0; i < imp_matrix -> variable_count; i ++) {
+        sat_expression_variable * v = sat_get_variable_from_id(i);
+
+        printf("%d - { %d %d } - %s\n",i, imp_matrix->d_0[i],
+            imp_matrix->d_1[i], v -> name);
+    }
     
     gettimeofday(&timstr,NULL);
     t_end=timstr.tv_sec+(timstr.tv_usec/1000000.0);
