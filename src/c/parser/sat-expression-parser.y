@@ -83,11 +83,11 @@ expression :
     TOK_OB expression_unary TOK_CB {
     $$ = $2;
     }
-|   TOK_OB expression_binary TOK_CB {
-    $$ = $2;
-    }
 |   expression_unary {
     $$ = $1;
+    }
+|   TOK_OB expression_binary TOK_CB {
+    $$ = $2;
     }
 |   expression_binary {
     $$ = $1;
@@ -127,23 +127,19 @@ unary_constraints :
 ;
 
 unary_constraint  :
-    TOK_ID TOK_OP_EQ TOK_ZERO {
-        sat_expression_variable * var = sat_new_named_expression_variable($1);
-        var -> can_be_0 = SAT_TRUE;
-        var -> can_be_1 = SAT_FALSE;
+    variable TOK_OP_EQ TOK_ZERO {
+        $1 -> can_be_0 = SAT_TRUE;
+        $1 -> can_be_1 = SAT_FALSE;
     }
-|   TOK_ID TOK_OP_EQ TOK_ONE  {
-        sat_expression_variable * var = sat_new_named_expression_variable($1);
-        var -> can_be_0 = SAT_FALSE;
-        var -> can_be_1 = SAT_TRUE;
+|   variable TOK_OP_EQ TOK_ONE  {
+        $1 -> can_be_0 = SAT_FALSE;
+        $1 -> can_be_1 = SAT_TRUE;
     }
-|   TOK_ID TOK_OP_NE TOK_ZERO {
-        sat_expression_variable * var = sat_new_named_expression_variable($1);
-        var -> can_be_0 = SAT_FALSE;
+|   variable TOK_OP_NE TOK_ZERO {
+        $1 -> can_be_0 = SAT_FALSE;
     }
-|   TOK_ID TOK_OP_NE TOK_ONE {
-        sat_expression_variable * var = sat_new_named_expression_variable($1);
-        var -> can_be_1 = SAT_FALSE;
+|   variable TOK_OP_NE TOK_ONE {
+        $1 -> can_be_1 = SAT_FALSE;
     }
 ;
 

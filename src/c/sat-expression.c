@@ -89,25 +89,14 @@ sat_expression_variable * sat_new_named_expression_variable(
             
             return walker;
 
-        } else if (result < 0) {
-
-            sat_expression_variable * tr = sat_new_expression_variable();
-            tr     -> next = prev -> next;
-            prev   -> next = tr;
-            tr     -> name = name;
-            return tr;
-
         } else if (walker -> next == NULL)  {
             
             sat_expression_variable * tr = sat_new_expression_variable();
             walker -> next = tr;
             tr     -> name = name;
             return tr;
-
-        } else {
-            prev   = walker;
-            walker = walker -> next;
         }
+        walker = walker -> next;
     }
     assert(1==0);
 }

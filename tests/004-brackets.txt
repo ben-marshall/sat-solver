@@ -1,4 +1,5 @@
 
-a = ~b & ( c | d)
+carry = a & b
+sum   = (~a & b) | (~b & a)
 
 end
