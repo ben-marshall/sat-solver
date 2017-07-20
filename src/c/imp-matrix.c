@@ -398,38 +398,6 @@ void sat_propagate_imp_matrix(
 
 
 /*!
-@brief Add all relations involving a particular variable to a worklist.
-@details
-- If on_implyer is true, then all relations (x, variable) are added
-  where variable is the supplied argument and x is all other variables.
-- If on_implyer is false, then all relations (variable, x) are added
-  where variable is the supplied argument and x is all other variables.
-*/
-void sat_solve_enqueue(
-    sat_imp_matrix  * matrix,
-    queue           * worklist,
-    t_sat_bool        on_implyer,
-    sat_var_idx       variable
-){
-    sat_var_idx i = 0;
-    for(i = 0; i < matrix -> variable_count; i ++) {
-        // Add all relations start -> X where X is any other variable to the
-        // work list.
-        if(i != variable) {
-            sat_relation * toadd;
-            if(on_implyer) {
-                toadd = sat_new_relation(i, variable);
-            } else {
-                toadd = sat_new_relation(variable,i);
-            }
-            queue_enqueue(worklist, (void*) toadd);
-        }
-    }
-    
-}
-
-
-/*!
 @brief Implements the arc-reduce function of AC-3
 @param in matrix - The matrix of variable to operate on.
 @param in relation - The two related variables to check.
@@ -442,6 +410,12 @@ t_sat_bool sat_arc_reduce(
     sat_var_idx var_b = relation -> implyee;
 
     sat_imp_matrix_cell * rel = sat_get_imp_matrix_cell(matrix,var_a, var_b);
+
+    if(rel -> checked) {
+        return 0;
+    } else {
+        rel -> checked = SAT_TRUE;
+    }
 
     t_sat_bool  a_b   = rel -> a_imp_b  ;
     t_sat_bool  a_nb  = rel -> a_imp_nb ;
@@ -457,15 +431,19 @@ t_sat_bool sat_arc_reduce(
         t_sat_bool  b0    = matrix -> d_0[var_b];
         t_sat_bool  b1    = matrix -> d_1[var_b];
 
-        matrix -> d_0[var_a] = 
-            (a0 && na_b  && b1) ||
-            (a0 && na_nb && b0)  ;
+        matrix -> d_0[var_a] =
+            (a0 && na_nb && b0) ||
+            (a0 && na_b  && b1)  ;
         
-        matrix -> d_1[var_a] = 
-            (a1 && a_b   && b1) ||
-            (a1 && a_nb  && b0)  ;
+        matrix -> d_1[var_a] =
+            (a1 && a_nb && b0) ||
+            (a1 && a_b  && b1)  ;
 
-        return (a0 != matrix -> d_0[var_a]) || (a1 != matrix -> d_1[var_a]);
+        t_sat_bool delta = (matrix -> d_0[var_a] != a0) ||
+                           (matrix -> d_1[var_a] != a1)  ;
+
+        printf("Checking %d -> %d : %d\n", var_a, var_b, delta);
+
     }
     return 0;
 }
@@ -486,7 +464,16 @@ t_sat_bool sat_solve(
 
     // Construct the initial list of relations to deal with.
     queue * worklist = queue_new();
-    sat_solve_enqueue(matrix, worklist, SAT_FALSE, start);
+    
+    sat_var_idx i = 0;
+    for(i = 0; i < matrix -> variable_count; i ++) {
+        // Add all relations start -> X where X is any other variable to the
+        // work list.
+        if(i != start ) {
+            sat_relation * toadd = sat_new_relation(start ,i);
+            queue_enqueue(worklist, (void*) toadd);
+        }
+    }
 
     printf("Solve - Initial worklist size: %d\n", worklist -> length);
     
@@ -495,7 +482,8 @@ t_sat_bool sat_solve(
 
         sat_relation * tocheck = (sat_relation*)queue_dequeue(worklist);
 
-        printf("Checking %d -> %d\n", tocheck -> implyer, tocheck -> implyee);
+        sat_var_idx var_x = tocheck -> implyer;
+        sat_var_idx var_y = tocheck -> implyee;
         
         t_sat_bool reduce_result = sat_arc_reduce(matrix, tocheck);
 
@@ -504,8 +492,8 @@ t_sat_bool sat_solve(
             // Check the domain of the implyer varible of the relation being
             // checked.
 
-            if(!(matrix -> d_0[tocheck -> implyer] ||
-                 matrix -> d_1[tocheck -> implyer])) {
+            if(!(matrix -> d_0[var_x] ||
+                 matrix -> d_1[var_x])) {
                 
                 // Fail, the implyer has an empty domain!
                 result = SAT_FALSE;
@@ -514,8 +502,14 @@ t_sat_bool sat_solve(
                 
                 // We've checked all relations X -> Y for all variables Y.
                 // Now check Z -> X for all variables Z.
-                sat_solve_enqueue(matrix, worklist, SAT_TRUE, 
-                                                        tocheck -> implyer);
+
+                for(i = 0; i < matrix -> variable_count; i ++) {
+                    if(i != var_y && i != var_x) {
+                        sat_relation * toadd = sat_new_relation(i, var_x);
+                        queue_enqueue(worklist, toadd);
+                    }
+                }
+                
 
             }
 

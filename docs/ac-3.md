@@ -93,7 +93,7 @@ arc_reduce(x,y) =
     foreach Vx in D(x)
         # Given a value of X, find set of values of Y which satisfies the
         # constraints on x and y.
-        let Vy = {v | v in D(v) which satisfies B(x,y)}
+        let Vy = {v | v in D(y) which satisfies B(x,y)}
 
         if Vy == {}
             D(x) = D(x) - {Vx}
