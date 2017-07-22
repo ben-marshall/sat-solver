@@ -2,4 +2,10 @@
 a = b & c
 c = ~b
 
+b == 1
+
+expect domain c == {0}
+expect domain b == {1}
+expect domain a == {0}
+
 end

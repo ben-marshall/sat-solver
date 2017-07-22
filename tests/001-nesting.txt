@@ -1,7 +1,11 @@
 
 a = b & c
-a = x & y
 c = ~ k
+b = w | x
+
+expect domain a == { 0 1 }
+expect domain b == { 0 1 }
+expect domain c == { 0 1 }
 
 end
 
