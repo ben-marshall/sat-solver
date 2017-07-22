@@ -37,10 +37,11 @@ extern sat_assignment * yy_assignments;
 %token TOK_EXPECT 
 %token TOK_DOMAIN 
 
-%left TOK_OP_OR
-%left TOK_OP_AND 
-%left TOK_OP_XOR
+%left  TOK_OP_OR
+%left  TOK_OP_AND 
+%left  TOK_OP_XOR
 %right TOK_NOT
+%left  TOK_OB
 
 %type <expr>    expression_unary
 %type <expr>    expression_binary
@@ -84,14 +85,11 @@ assignment : variable TOK_ASSIGN expression {
 ;
 
 expression :
-    TOK_OB expression_unary TOK_CB {
+    TOK_OB expression TOK_CB {
     $$ = $2;
     }
 |   expression_unary {
     $$ = $1;
-    }
-|   TOK_OB expression_binary TOK_CB {
-    $$ = $2;
     }
 |   expression_binary {
     $$ = $1;

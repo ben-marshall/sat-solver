@@ -1,10 +1,13 @@
 
 a = b & c
 
+w = x & y
+
 c == 0
 
 expect domain a == { 0  }
 expect domain b == { 0 1 }
 expect domain c == { 0 }
+expect domain w == {0 1}
 
 end
