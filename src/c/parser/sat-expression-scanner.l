@@ -33,6 +33,12 @@ OP_XOR   \^
 OB       \(
 CB       \)
 
+EXPECT   expect
+DOMAIN   domain
+
+OP       \{
+CP       \}
+
 %%
 
 {END}  {
@@ -47,13 +53,25 @@ CB       \)
     return TOK_ONE;
 }
 
+{EXPECT} {
+    return TOK_EXPECT;
+}
+
+{DOMAIN} {
+    return TOK_DOMAIN;
+}
 {ID} {
     size_t text_len = strlen(yytext);
     yylval.vid = calloc(text_len, sizeof(char));
     memcpy(yylval.vid, yytext,text_len);
     return TOK_ID;
 }
-
+{OP} {
+    return TOK_OP;
+} 
+{CP} {
+    return TOK_CP;
+}
 {OB} {
     return TOK_OB;
 } 

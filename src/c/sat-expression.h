@@ -53,6 +53,10 @@ struct t_sat_expression_variable {
 
     t_sat_bool      can_be_0; //<! Initial domain constraint on being zero
     t_sat_bool      can_be_1; //<! Initial domain constraint on being one.
+
+    t_sat_bool  check_domain; //<! Should we check the domain of the var?
+    t_sat_bool      expect_0; //<! Expect 0 to be in the domain of the var
+    t_sat_bool      expect_1; //<! Expect 1 to be in the domain of the var
 } ;
 
 /*!
@@ -212,7 +216,6 @@ sat_assignment * sat_new_assignment (
     sat_expression_node     * expression  //!< Expression whoes value to take.
 );
 
-
 /*!
 @brief Frees an assignmnet from memory along with all child expression
 data structures. It does *not* free the expression variables however.
@@ -237,6 +240,21 @@ matrix.
 void sat_add_assignment_to_imp_matrix(
     sat_imp_matrix * matrix,
     sat_assignment * toadd
+);
+
+
+/*!
+@brief Check if the domains of all variables after sat solving match any
+prior expectations.
+@param in variables - Linked list of variables to check.
+@param in print_failures - If true, print to stdout when we fail expectations
+@returns Boolean True indicating all expectations were met. False otherwise.
+Returns true if there were no expectations.
+*/
+t_sat_bool sat_check_expectations(
+    sat_expression_variable * variables,
+    sat_imp_matrix          * matrix,
+    t_sat_bool                print_failures
 );
 
 #endif

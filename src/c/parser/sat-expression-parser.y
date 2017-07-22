@@ -32,6 +32,10 @@ extern sat_assignment * yy_assignments;
 %token TOK_OP_NOT 
 %token TOK_OB     
 %token TOK_CB     
+%token TOK_OP     
+%token TOK_CP     
+%token TOK_EXPECT 
+%token TOK_DOMAIN 
 
 %left TOK_OP_OR
 %left TOK_OP_AND 
@@ -57,7 +61,7 @@ extern sat_assignment * yy_assignments;
 /* Grammar follows */
 %%
 
-start : input_assignments unary_constraints TOK_END {
+start : input_assignments unary_constraints expectations TOK_END {
     $$ = $1;
     yy_assignments = $$;
 }
@@ -142,6 +146,36 @@ unary_constraint  :
         $1 -> can_be_1 = SAT_FALSE;
     }
 ;
+
+expectations:
+|   domain_expectation expectations
+;
+
+domain_expectation:
+    TOK_EXPECT TOK_DOMAIN TOK_ID TOK_OP_EQ TOK_OP TOK_CP {
+        sat_expression_variable * vv = sat_new_named_expression_variable($3);
+        vv -> check_domain = SAT_TRUE;
+        vv -> expect_0     = SAT_FALSE;
+        vv -> expect_1     = SAT_FALSE;
+}
+|   TOK_EXPECT TOK_DOMAIN TOK_ID TOK_OP_EQ TOK_OP TOK_ONE  TOK_CP{
+        sat_expression_variable * vv = sat_new_named_expression_variable($3);
+        vv -> check_domain = SAT_TRUE;
+        vv -> expect_0     = SAT_FALSE;
+        vv -> expect_1     = SAT_TRUE;
+}
+|   TOK_EXPECT TOK_DOMAIN TOK_ID TOK_OP_EQ TOK_OP TOK_ZERO TOK_CP{
+        sat_expression_variable * vv = sat_new_named_expression_variable($3);
+        vv -> check_domain = SAT_TRUE;
+        vv -> expect_0     = SAT_TRUE;
+        vv -> expect_1     = SAT_FALSE;
+}
+|   TOK_EXPECT TOK_DOMAIN TOK_ID TOK_OP_EQ TOK_OP TOK_ZERO TOK_ONE TOK_CP{
+        sat_expression_variable * vv = sat_new_named_expression_variable($3);
+        vv -> check_domain = SAT_TRUE;
+        vv -> expect_0     = SAT_TRUE;
+        vv -> expect_1     = SAT_TRUE;
+}
 
 %%
 

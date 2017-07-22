@@ -594,3 +594,43 @@ void sat_add_assignment_to_imp_matrix(
     matrix -> d_0[var_a] = toadd -> variable -> can_be_0;
     matrix -> d_1[var_a] = toadd -> variable -> can_be_1;
 }
+
+
+/*!
+@brief Check if the domains of a variable after sat solving match any
+prior expectations.
+@param in variable - The variable to check.
+@param in matrix - The matrix to check against.
+@returns Boolean True indicating all expectations were met. False otherwise.
+Returns true if there were no expectations.
+*/
+t_sat_bool sat_check_expectations(
+    sat_expression_variable * variable,
+    sat_imp_matrix          * matrix,
+    t_sat_bool                print_failures
+){
+    sat_expression_variable * walker = variable;
+    t_sat_bool  result = SAT_TRUE;
+
+    if(walker -> check_domain){
+
+        if((walker -> expect_0 && !(matrix -> d_0[walker->uid])) ||
+           (walker -> expect_1 && !(matrix -> d_1[walker->uid]))  ) {
+
+            result = 0;
+
+            if ( print_failures) {
+
+                printf("Expected domain {");
+                if(walker -> expect_0) printf(" 0 ");
+                if(walker -> expect_1) printf(" 1 ");
+                printf("} for variable %s but got {", walker -> name);
+                if(matrix -> d_0[walker->uid]) printf(" 0 ");
+                if(matrix -> d_1[walker->uid]) printf(" 1 ");
+                printf("}\n");
+            }
+        }
+    }
+    
+    return result;
+}

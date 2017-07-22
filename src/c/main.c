@@ -183,9 +183,7 @@ int main (int argc, char ** argv)
     sat_var_idx i = 0;
     for(i = 0; i < imp_matrix -> variable_count; i ++) {
         sat_expression_variable * v = sat_get_variable_from_id(i);
-
-        printf("%d - { %d %d } - %s\n",i, imp_matrix->d_0[i],
-            imp_matrix->d_1[i], v -> name);
+        sat_check_expectations(v,imp_matrix,SAT_TRUE);
     }
     
     gettimeofday(&timstr,NULL);
