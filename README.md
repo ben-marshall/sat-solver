@@ -1,6 +1,7 @@
 
 # SAT Solver
 
+[![Build Status](https://travis-ci.org/ben-marshall/sat-solver.svg?branch=master)](https://travis-ci.org/ben-marshall/sat-solver)
 [![Project Documentation](https://readthedocs.org/projects/simple-sat-solver/badge/?version=latest)](http://simple-sat-solver.readthedocs.io/en/latest/overview)
 [![Code Documentation](https://codedocs.xyz/ben-marshall/sat-solver.svg)](https://codedocs.xyz/ben-marshall/sat-solver/)
 
