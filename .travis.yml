@@ -22,7 +22,7 @@ before_script:
 
 script:
  - make
- - make run-regressions
+ - make run-regression
 
 after_success:
  - echo "Success"
