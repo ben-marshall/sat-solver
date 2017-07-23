@@ -426,6 +426,13 @@ void sat_add_implications_for_and_to_matrix(
 
 /*!
 @brief Adds all implications for a or expression to the matrix
+@details
+    if c = b | a then
+         a -> c
+         b -> c
+        ~c -> ~a
+        ~c -> ~b
+    end
 @param in matrix - The implication matrix to add entries too.
 @param in toadd - The expression to add implications for.
 */
@@ -440,15 +447,22 @@ void sat_add_implications_for_or_to_matrix(
     sat_var_idx var_b = toadd -> node.binary_operands.rhs -> ir -> uid;
     sat_var_idx var_a = toadd -> node.binary_operands.lhs -> ir -> uid;
 
-    sat_imp_matrix_cell * c_to_a = sat_get_imp_matrix_cell(matrix,var_c,var_a);
-    sat_imp_matrix_cell * c_to_b = sat_get_imp_matrix_cell(matrix,var_c,var_b);
-    sat_imp_matrix_cell * b_to_c = sat_get_imp_matrix_cell(matrix,var_b,var_c);
-    sat_imp_matrix_cell * a_to_c = sat_get_imp_matrix_cell(matrix,var_a,var_c);
-
     // Implications for an OR operation: c = a | b
-    sat_set_imp_matrix_cell(c_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
-    sat_set_imp_matrix_cell(c_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    
+    // ~c -> ~a
+    sat_imp_matrix_cell * c_to_a = sat_get_imp_matrix_cell(matrix,var_c,var_a);
+    sat_set_imp_matrix_cell(c_to_a,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    
+    // ~c -> ~a
+    sat_imp_matrix_cell * c_to_b = sat_get_imp_matrix_cell(matrix,var_c,var_b);
+    sat_set_imp_matrix_cell(c_to_b,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    
+    // a -> c
+    sat_imp_matrix_cell * a_to_c = sat_get_imp_matrix_cell(matrix,var_a,var_c);
     sat_set_imp_matrix_cell(a_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
+    
+    // b -> c
+    sat_imp_matrix_cell * b_to_c = sat_get_imp_matrix_cell(matrix,var_b,var_c);
     sat_set_imp_matrix_cell(b_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
 
     matrix -> implication_count += 4;
