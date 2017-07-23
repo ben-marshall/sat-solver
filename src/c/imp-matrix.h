@@ -159,6 +159,19 @@ void sat_set_domain(
 
 
 /*!
+@brief Get the domain for a particular variable.
+@param in imp_mat - The matrix to operate on.
+@param in variable - The variable who's domain we are updating.
+@returns True if the suppled value is in the domain of the variable.
+*/
+t_sat_bool sat_value_in_domain(
+    sat_imp_matrix * imp_mat,
+    sat_var_idx      variable,
+    t_sat_bool       value
+);
+
+
+/*!
 @brief Solve the constraint problem represented by the supplied matrix.
 @param in imp_mat - The matrix to operate on.
 @returns True if the system is solvable.

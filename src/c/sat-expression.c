@@ -509,6 +509,11 @@ t_sat_bool sat_check_expectations(
     sat_imp_matrix          * matrix,
     t_sat_bool                print_failures
 ){
-
-    return SAT_FALSE;
+    
+    if( (var -> expect_0 != sat_value_in_domain(matrix,var->uid,SAT_FALSE)) ||
+        (var -> expect_1 != sat_value_in_domain(matrix,var->uid,SAT_TRUE ))  )
+    {
+        return SAT_FALSE;
+    }
+    return SAT_TRUE;
 }

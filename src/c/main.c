@@ -85,6 +85,18 @@ int main (int argc, char ** argv)
         sat_add_assignment_to_imp_matrix(imp_matrix,walker);
         walker = walker -> next;
     }
+
+
+    // Check if we met our expectations of variable domains.
+
+    t_sat_bool met_expectations = SAT_TRUE;
+    sat_var_idx vi;
+
+    for(vi = 0; vi < variable_count; vi ++)
+    {
+        sat_expression_variable * var = sat_get_variable_from_id(vi);
+        met_expectations &= sat_check_expectations(var,imp_matrix,SAT_TRUE);
+    }
     
 
 
@@ -100,7 +112,7 @@ int main (int argc, char ** argv)
     // Free the expression variable list.
     sat_free_expression_variable(yy_sat_variables,1);
     
-    if(1) {
+    if(met_expectations) {
         printf("Expectations Met!\n");
         return 0;
     } else {
