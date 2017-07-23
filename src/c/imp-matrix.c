@@ -427,7 +427,7 @@ t_sat_bool sat_arc_reduce(
     if(a_b) {
         if(!(a1 && b1)) {
             matrix -> d_1[var_a] = 0;
-            delta = a1;
+            delta = 1;
         }
     }
     if(a_nb) {
@@ -475,8 +475,10 @@ t_sat_bool sat_solve(
         for(b = 0; b < matrix -> variable_count; b ++) {
         
             if(a != b) {
-                sat_relation * toadd = sat_new_relation(a,b);
-                queue_enqueue(worklist, (void*) toadd);
+                sat_relation * toadd1 = sat_new_relation(a,b);
+                queue_enqueue(worklist, (void*) toadd1);
+                sat_relation * toadd2 = sat_new_relation(b,a);
+                queue_enqueue(worklist, (void*) toadd2);
             }
 
         }
@@ -504,7 +506,7 @@ t_sat_bool sat_solve(
                 
                 // Fail, the implyer has an empty domain!
                 result = SAT_FALSE;
-                return result;
+                //return result;
 
             } else {
                 

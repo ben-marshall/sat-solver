@@ -1,0 +1,12 @@
+
+a4 = b4 | c4
+
+b4 == 0
+c4 == 0
+
+expect domain a4 == {0  }
+expect domain b4 == {0  }
+expect domain c4 == {0  }
+
+
+end

@@ -21,8 +21,9 @@ expect domain a2 == {0 1 }
 expect domain b2 == {0 1}
 expect domain c2 == {0  }
 
-expect domain a3 == {0  }
-expect domain c3 == {0  }
+expect domain a3 == {0 1 }
+expect domain b3 == {0  }
+expect domain c3 == {0 1}
 
 expect domain a4 == {0  }
 expect domain b4 == {0  }

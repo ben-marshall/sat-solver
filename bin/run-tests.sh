@@ -8,6 +8,8 @@ BINARY=./build/sats
 
 mkdir -p $OUTPUT_LOGS
 
+FINAL_RESULT=0
+
 function run_test {
 
     $BINARY $1 > $OUTPUT_LOGS/$TEST
@@ -21,6 +23,7 @@ function run_test {
     else
 
         echo "[FAIL] $1"
+        FINAL_RESULT=1
 
     fi
 
@@ -34,3 +37,5 @@ do
     run_test $TEST_VECTORS/$TEST
 
 done
+
+exit $FINAL_RESULT

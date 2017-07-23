@@ -180,13 +180,9 @@ int main (int argc, char ** argv)
     t_sat_bool  expectations_met = SAT_TRUE;
 
     for(i = 0; i < imp_matrix -> variable_count; i ++) {
-        
-        sat_expression_variable * v = sat_get_variable_from_id(i);
-        expectations_met = expectations_met &&
-                           sat_check_expectations(v,imp_matrix,SAT_TRUE);
 
-        printf("%d - { %d %d } - %s\n",i, imp_matrix->d_0[i],
-            imp_matrix->d_1[i], v -> name);
+        sat_expression_variable * v = sat_get_variable_from_id(i);
+        expectations_met &= sat_check_expectations(v,imp_matrix,SAT_TRUE);
 
     }
     
@@ -221,8 +217,10 @@ int main (int argc, char ** argv)
     sat_free_expression_variable(yy_sat_variables,1);
     
     if(expectations_met) {
+        printf("Expectations Met!\n");
         return 0;
     } else {
+        printf("Expectations Not Met!\n");
         return 1;
     }
 }

@@ -7,7 +7,7 @@ b2 == 0
 b3 == 1
 
 expect domain a1 == {0 1}
-expect domain a1 == {0 1}
+expect domain b1 == {0 1}
 
 expect domain b2 == {0}
 expect domain a2 == {0}

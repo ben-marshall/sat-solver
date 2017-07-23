@@ -230,6 +230,14 @@ void sat_free_assignment(
     t_sat_bool       freelist
 );
 
+/*!
+@brief Apply any unary constraints on the value of a variable to an
+implication matrix.
+*/
+void sat_apply_unary_constraints(
+    sat_imp_matrix          * matrix,
+    sat_expression_variable * var
+);
 
 /*!
 @brief Takes a single assignment expression and adds it to the implication

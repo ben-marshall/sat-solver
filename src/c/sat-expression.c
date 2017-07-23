@@ -78,6 +78,7 @@ sat_expression_variable * sat_new_named_expression_variable(
         sat_expression_variable * tr = sat_new_expression_variable();
         tr     -> name = name;
         yy_sat_variables = tr;
+
         return tr;
     }
 
@@ -379,14 +380,16 @@ void sat_add_implications_for_not_to_matrix(
     assert(toadd -> node_type == SAT_EXPRESSION_NODE);
     assert(toadd -> op_type == SAT_OP_NOT);
 
+    // a = ~b
     sat_var_idx var_a = toadd -> ir -> uid;
     sat_var_idx var_b = toadd -> node.unary_operands.rhs -> ir -> uid;
+    
+    // Implications for a NOT operation.
 
     sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
-    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
-
-    // Implications for a NOT operation.
     sat_set_imp_matrix_cell(a_to_b, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
+    
+    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
     sat_set_imp_matrix_cell(b_to_a, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
 
     matrix -> implication_count += 2;
@@ -490,10 +493,10 @@ void sat_add_implications_for_leaf_to_matrix(
     sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
     sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
 
-    matrix -> d_0[var_a] = toadd -> node.leaf_variable -> can_be_0;
-    matrix -> d_1[var_a] = toadd -> node.leaf_variable -> can_be_1;
-
     matrix -> implication_count += 2;
+    
+    sat_apply_unary_constraints(matrix,toadd -> ir);
+    sat_apply_unary_constraints(matrix,toadd -> node.leaf_variable);
 }
 
 
@@ -597,16 +600,30 @@ void sat_add_assignment_to_imp_matrix(
     sat_var_idx var_a = toadd -> expression -> ir -> uid;
 
     sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
-    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
-    
     sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
+    
+    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
     sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
 
     // Mark the variable being assigned to as not an input to the system.
     matrix -> is_input[toadd -> variable -> uid] = SAT_FALSE;
 
-    matrix -> d_0[var_a] = toadd -> variable -> can_be_0;
-    matrix -> d_1[var_a] = toadd -> variable -> can_be_1;
+    sat_apply_unary_constraints(matrix,toadd -> variable);
+}
+
+
+/*!
+@brief Apply any unary constraints on the value of a variable to an
+implication matrix.
+*/
+void sat_apply_unary_constraints(
+    sat_imp_matrix          * matrix,
+    sat_expression_variable * var
+){
+    sat_var_idx i = var -> uid;
+    
+    matrix -> d_0[i] = var -> can_be_0;
+    matrix -> d_1[i] = var -> can_be_1;
 }
 
 
@@ -619,32 +636,38 @@ prior expectations.
 Returns true if there were no expectations.
 */
 t_sat_bool sat_check_expectations(
-    sat_expression_variable * variable,
+    sat_expression_variable * var,
     sat_imp_matrix          * matrix,
     t_sat_bool                print_failures
 ){
-    sat_expression_variable * walker = variable;
+
     t_sat_bool  result = SAT_TRUE;
 
-    if(walker -> check_domain){
+    if(var -> check_domain){
 
-        if((walker -> expect_0 && !(matrix -> d_0[walker->uid])) ||
-           (walker -> expect_1 && !(matrix -> d_1[walker->uid]))  ) {
+        if (var -> expect_0 != matrix -> d_0[var->uid]) {
+            result = SAT_FALSE;
+        }
 
-            result = 0;
+        if (var -> expect_1 != matrix -> d_1[var->uid]) {
+            result = SAT_FALSE;
 
-            if ( print_failures) {
+        }
+        
+        if(print_failures && !result) 
+        {
+            printf("Expected domain {");
+            if(var -> expect_0) printf(" 0 ");
+            if(var -> expect_1) printf(" 1 ");
+            printf("} for variable %s but got {", var -> name);
+            if(matrix -> d_0[var->uid]) printf(" 0 ");
+            if(matrix -> d_1[var->uid]) printf(" 1 ");
 
-                printf("Expected domain {");
-                if(walker -> expect_0) printf(" 0 ");
-                if(walker -> expect_1) printf(" 1 ");
-                printf("} for variable %s but got {", walker -> name);
-                if(matrix -> d_0[walker->uid]) printf(" 0 ");
-                if(matrix -> d_1[walker->uid]) printf(" 1 ");
-                printf("}\n");
-            }
+            printf("} - {");
+            if(var -> can_be_0) printf(" 0 ");
+            if(var -> can_be_1) printf(" 1 ");
+            printf("}\n");
         }
     }
-    
     return result;
 }
