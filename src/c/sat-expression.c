@@ -71,7 +71,6 @@ sat_expression_variable * sat_new_named_expression_variable(
 ){
     // Check if a variable with this name already exists.
     sat_expression_variable * walker = yy_sat_variables;
-    sat_expression_variable * prev   = walker;
 
     if(walker == NULL) {
 
@@ -368,137 +367,6 @@ void sat_free_assignment(
 }
 
 
-/*!
-@brief Adds all implications for a NOT expression to the matrix
-@param in matrix - The implication matrix to add entries too.
-@param in toadd - The expression to add implications for.
-*/
-void sat_add_implications_for_not_to_matrix(
-    sat_imp_matrix      * matrix,
-    sat_expression_node * toadd
-) {
-    assert(toadd -> node_type == SAT_EXPRESSION_NODE);
-    assert(toadd -> op_type == SAT_OP_NOT);
-
-    // a = ~b
-    sat_var_idx var_a = toadd -> ir -> uid;
-    sat_var_idx var_b = toadd -> node.unary_operands.rhs -> ir -> uid;
-    
-    // Implications for a NOT operation.
-
-    sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
-    sat_set_imp_matrix_cell(a_to_b, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
-    
-    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
-    sat_set_imp_matrix_cell(b_to_a, BITOP_IGN,BITOP_SET,BITOP_SET,BITOP_IGN);
-
-    matrix -> implication_count += 2;
-}
-
-
-/*!
-@brief Adds all implications for a AND expression to the matrix
-@param in matrix - The implication matrix to add entries too.
-@param in toadd - The expression to add implications for.
-*/
-void sat_add_implications_for_and_to_matrix(
-    sat_imp_matrix      * matrix,
-    sat_expression_node * toadd
-) {
-    assert(toadd -> node_type == SAT_EXPRESSION_NODE);
-    assert(toadd -> op_type == SAT_OP_AND);
-
-    sat_var_idx var_c = toadd -> ir -> uid;
-    sat_var_idx var_b = toadd -> node.binary_operands.rhs -> ir -> uid;
-    sat_var_idx var_a = toadd -> node.binary_operands.lhs -> ir -> uid;
-
-    sat_imp_matrix_cell * c_to_a = sat_get_imp_matrix_cell(matrix,var_c,var_a);
-    sat_imp_matrix_cell * c_to_b = sat_get_imp_matrix_cell(matrix,var_c,var_b);
-    sat_imp_matrix_cell * b_to_c = sat_get_imp_matrix_cell(matrix,var_b,var_c);
-    sat_imp_matrix_cell * a_to_c = sat_get_imp_matrix_cell(matrix,var_a,var_c);
-    
-    // Implications for an AND operation: c = a & b
-    sat_set_imp_matrix_cell(c_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
-    sat_set_imp_matrix_cell(c_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
-    sat_set_imp_matrix_cell(a_to_c,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
-    sat_set_imp_matrix_cell(b_to_c,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
-
-    matrix -> implication_count += 4;
-}
-
-
-/*!
-@brief Adds all implications for a or expression to the matrix
-@details
-    if c = b | a then
-         a -> c
-         b -> c
-        ~c -> ~a
-        ~c -> ~b
-    end
-@param in matrix - The implication matrix to add entries too.
-@param in toadd - The expression to add implications for.
-*/
-void sat_add_implications_for_or_to_matrix(
-    sat_imp_matrix      * matrix,
-    sat_expression_node * toadd
-) {
-    assert(toadd -> node_type == SAT_EXPRESSION_NODE);
-    assert(toadd -> op_type == SAT_OP_OR);
-
-    sat_var_idx var_c = toadd -> ir -> uid;
-    sat_var_idx var_b = toadd -> node.binary_operands.rhs -> ir -> uid;
-    sat_var_idx var_a = toadd -> node.binary_operands.lhs -> ir -> uid;
-
-    // Implications for an OR operation: c = a | b
-    
-    // ~c -> ~a
-    sat_imp_matrix_cell * c_to_a = sat_get_imp_matrix_cell(matrix,var_c,var_a);
-    sat_set_imp_matrix_cell(c_to_a,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
-    
-    // ~c -> ~a
-    sat_imp_matrix_cell * c_to_b = sat_get_imp_matrix_cell(matrix,var_c,var_b);
-    sat_set_imp_matrix_cell(c_to_b,BITOP_IGN,BITOP_IGN,BITOP_IGN,BITOP_SET);
-    
-    // a -> c
-    sat_imp_matrix_cell * a_to_c = sat_get_imp_matrix_cell(matrix,var_a,var_c);
-    sat_set_imp_matrix_cell(a_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
-    
-    // b -> c
-    sat_imp_matrix_cell * b_to_c = sat_get_imp_matrix_cell(matrix,var_b,var_c);
-    sat_set_imp_matrix_cell(b_to_c,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_IGN);
-
-    matrix -> implication_count += 4;
-}
-
-
-/*!
-@brief Adds all implications for a leaf variable to the matrix
-@param in matrix - The implication matrix to add entries too.
-@param in toadd - The leaf expression to add implications for.
-*/
-void sat_add_implications_for_leaf_to_matrix(
-    sat_imp_matrix      * matrix,
-    sat_expression_node * toadd
-) {
-    assert(toadd -> node_type == SAT_EXPRESSION_LEAF);
-    assert(toadd -> op_type == SAT_OP_NONE);
-
-    sat_var_idx var_b = toadd ->  ir -> uid;
-    sat_var_idx var_a = toadd -> node.leaf_variable -> uid;
-
-    sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
-    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
-    
-    sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
-    sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
-
-    matrix -> implication_count += 2;
-    
-    sat_apply_unary_constraints(matrix,toadd -> ir);
-    sat_apply_unary_constraints(matrix,toadd -> node.leaf_variable);
-}
-
 
 /*!
 @brief Adds an expression and all sub-expressions into the implication matrix.
@@ -510,14 +378,8 @@ void sat_add_expression_to_imp_matrix(
     sat_expression_node * toadd
 ) {
     
-    // Mark the intermediate variable being assigned to as not an 
-    // input to the system.
-    matrix -> is_input[toadd -> ir -> uid] = SAT_FALSE;
-    matrix -> d_0[toadd -> ir -> uid] = SAT_TRUE;
-    matrix -> d_1[toadd -> ir -> uid] = SAT_TRUE;
-    
     if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
-        sat_add_implications_for_leaf_to_matrix(matrix,toadd);
+        // Handle a Leaf expression
         return;
     }
 
@@ -527,7 +389,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.unary_operands.rhs);
 
-        sat_add_implications_for_not_to_matrix(matrix,toadd);
 
     } else if (toadd -> op_type == SAT_OP_AND) {
 
@@ -537,7 +398,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
 
-        sat_add_implications_for_and_to_matrix(matrix,toadd);
 
     } else if (toadd -> op_type == SAT_OP_OR) {
 
@@ -547,7 +407,6 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
     
-        sat_add_implications_for_or_to_matrix(matrix,toadd);
 
     } else if (toadd -> op_type == SAT_OP_XOR) {
 
@@ -579,6 +438,19 @@ void sat_add_expression_to_imp_matrix(
 
 
 /*!
+@brief Apply any unary constraints on the value of a variable to an
+implication matrix.
+*/
+void sat_apply_unary_constraints(
+    sat_imp_matrix          * matrix,
+    sat_expression_variable * var
+){
+
+}
+
+
+
+/*!
 @brief Takes a single assignment expression and adds it to the implication
 matrix.
 @param inout matrix - The matrix to add the assignment to
@@ -592,38 +464,10 @@ void sat_add_assignment_to_imp_matrix(
     assert(matrix != NULL);
     assert(toadd  != NULL);
 
+    sat_apply_unary_constraints(matrix,toadd -> variable);
+
     // First add the expression associated with the assignment.
     sat_add_expression_to_imp_matrix(0,matrix, toadd -> expression);
-    
-    // Now add the implications for the variable being assigned to.
-    sat_var_idx var_b = toadd -> variable -> uid;
-    sat_var_idx var_a = toadd -> expression -> ir -> uid;
-
-    sat_imp_matrix_cell * a_to_b = sat_get_imp_matrix_cell(matrix,var_a,var_b);
-    sat_set_imp_matrix_cell(a_to_b,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
-    
-    sat_imp_matrix_cell * b_to_a = sat_get_imp_matrix_cell(matrix,var_b,var_a);
-    sat_set_imp_matrix_cell(b_to_a,BITOP_SET,BITOP_IGN,BITOP_IGN,BITOP_SET);
-
-    // Mark the variable being assigned to as not an input to the system.
-    matrix -> is_input[toadd -> variable -> uid] = SAT_FALSE;
-
-    sat_apply_unary_constraints(matrix,toadd -> variable);
-}
-
-
-/*!
-@brief Apply any unary constraints on the value of a variable to an
-implication matrix.
-*/
-void sat_apply_unary_constraints(
-    sat_imp_matrix          * matrix,
-    sat_expression_variable * var
-){
-    sat_var_idx i = var -> uid;
-    
-    matrix -> d_0[i] = var -> can_be_0;
-    matrix -> d_1[i] = var -> can_be_1;
 }
 
 
@@ -641,33 +485,5 @@ t_sat_bool sat_check_expectations(
     t_sat_bool                print_failures
 ){
 
-    t_sat_bool  result = SAT_TRUE;
-
-    if(var -> check_domain){
-
-        if (var -> expect_0 != matrix -> d_0[var->uid]) {
-            result = SAT_FALSE;
-        }
-
-        if (var -> expect_1 != matrix -> d_1[var->uid]) {
-            result = SAT_FALSE;
-
-        }
-        
-        if(print_failures && !result) 
-        {
-            printf("Expected domain {");
-            if(var -> expect_0) printf(" 0 ");
-            if(var -> expect_1) printf(" 1 ");
-            printf("} for variable %s but got {", var -> name);
-            if(matrix -> d_0[var->uid]) printf(" 0 ");
-            if(matrix -> d_1[var->uid]) printf(" 1 ");
-
-            printf("} - {");
-            if(var -> can_be_0) printf(" 0 ");
-            if(var -> can_be_1) printf(" 1 ");
-            printf("}\n");
-        }
-    }
-    return result;
+    return SAT_FALSE;
 }
