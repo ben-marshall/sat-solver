@@ -381,6 +381,7 @@ void sat_add_expression_to_imp_matrix(
     if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
         // Handle a Leaf expression
         sat_apply_unary_constraints(matrix, toadd -> node.leaf_variable);
+
         return;
     }
 
@@ -493,6 +494,14 @@ void sat_add_assignment_to_imp_matrix(
     sat_apply_unary_constraints(matrix,toadd -> variable);
 
     sat_add_expression_to_imp_matrix(0,matrix, toadd -> expression);
+
+    if(toadd -> variable != toadd -> expression -> ir) {
+        sat_add_relation(matrix,
+                         toadd -> variable -> uid,
+                         toadd -> expression -> ir -> uid,
+                         SAT_EQ,
+                         toadd -> expression -> ir -> uid);
+    }
 }
 
 
@@ -510,6 +519,15 @@ t_sat_bool sat_check_expectations(
     t_sat_bool                print_failures
 ){
     
+    if(!var -> check_domain) return SAT_TRUE;
+    printf("Expected {%d %d} for %s (%d), got {%d %d}\n",
+        var -> expect_0,
+        var -> expect_1,
+        var -> name,
+        var -> uid,
+        sat_value_in_domain(matrix,var->uid,SAT_FALSE),
+        sat_value_in_domain(matrix,var->uid,SAT_TRUE )
+    );
     if( (var -> expect_0 != sat_value_in_domain(matrix,var->uid,SAT_FALSE)) ||
         (var -> expect_1 != sat_value_in_domain(matrix,var->uid,SAT_TRUE ))  )
     {

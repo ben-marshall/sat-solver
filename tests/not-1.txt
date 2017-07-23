@@ -1,0 +1,9 @@
+
+a2 = ~b2
+
+b2 == 0
+
+expect domain a2 == {1}
+expect domain b2 == {0}
+
+end

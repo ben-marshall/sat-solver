@@ -85,10 +85,14 @@ int main (int argc, char ** argv)
         sat_add_assignment_to_imp_matrix(imp_matrix,walker);
         walker = walker -> next;
     }
+    printf("[DONE]\n");
 
+    // Run the sat solver.
+    printf("Running SAT Solver...           "); fflush(stdout);
+    sat_solve(imp_matrix);
+    printf("[DONE]\n");
 
     // Check if we met our expectations of variable domains.
-
     t_sat_bool met_expectations = SAT_TRUE;
     sat_var_idx vi;
 

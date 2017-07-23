@@ -24,13 +24,14 @@ typedef char * sat_var_name;
 //! Describes a single binary operation on two variables.
 typedef enum e_sat_binary_op {
     SAT_INPUT =0,   //!< No operation, variable is an input.
-    SAT_OR,
-    SAT_NOR,
-    SAT_XOR,
-    SAT_NXOR,
-    SAT_AND,
-    SAT_NAND,
-    SAT_IMP         //!< Implies
+    SAT_OR=1,
+    SAT_NOR=2,
+    SAT_XOR=3,
+    SAT_NXOR=4,
+    SAT_AND=5,
+    SAT_NAND=6,
+    SAT_EQ=7,
+    SAT_IMP=8         //!< Implies
 } sat_binary_op;
 
 //  ------------------ Data Structures -----------------------------------
@@ -168,6 +169,17 @@ t_sat_bool sat_value_in_domain(
     sat_imp_matrix * imp_mat,
     sat_var_idx      variable,
     t_sat_bool       value
+);
+
+/*!
+@brief Check the domain for a particular variable is empty.
+@param in imp_mat - The matrix to operate on.
+@param in variable - The variable who's domain we are querying.
+@returns True if the variable has an empty domain.
+*/
+t_sat_bool sat_domain_empty(
+    sat_imp_matrix * imp_mat,
+    sat_var_idx      variable
 );
 
 
