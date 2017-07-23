@@ -83,7 +83,7 @@ void sat_add_relation (
     sat_var_idx      rhs
 ){
     
-    printf("Add relation %d between %d, %d, %d\n",op, assignee,lhs,rhs);
+    //printf("Add relation %d between %d, %d, %d\n",op, assignee,lhs,rhs);
     imp_mat -> lhs[assignee] = lhs;
     imp_mat -> rhs[assignee] = rhs;
     imp_mat -> op [assignee] = op;
@@ -202,9 +202,9 @@ t_sat_bool sat_solve_arc_reduce(
     t_sat_bool acb0 = d0;
     t_sat_bool acb1 = d1;
 
-    printf("rel %d - d0 = %d, d1 = %d\n",rel ,d0,d1);
-    printf("lhs %d - d0 = %d, d1 = %d\n",lhs ,l_cb0, l_cb1);
-    printf("rhs %d - d0 = %d, d1 = %d\n",rhs ,r_cb0, r_cb1);
+    //printf("rel %d - d0 = %d, d1 = %d\n",rel ,d0,d1);
+    //printf("lhs %d - d0 = %d, d1 = %d\n",lhs ,l_cb0, l_cb1);
+    //printf("rhs %d - d0 = %d, d1 = %d\n",rhs ,r_cb0, r_cb1);
 
     switch(imp_mat -> op[rel]) {
         case(SAT_OR):
@@ -228,7 +228,7 @@ t_sat_bool sat_solve_arc_reduce(
             acb1 = l_cb1 && r_cb1;
             break;
         case(SAT_NAND):
-            printf("%d = %d NAND %d\n", rel, lhs, rhs);
+            //printf("%d = %d NAND %d\n", rel, lhs, rhs);
             acb0 = l_cb1 && r_cb1;
             acb1 = l_cb0 || r_cb0;
             break;
@@ -237,19 +237,19 @@ t_sat_bool sat_solve_arc_reduce(
             acb1 = l_cb0 || (l_cb1 && r_cb1);
             break;
         case(SAT_EQ):
-            printf("%d EQ %d\n", rel, rhs);
+            //printf("%d EQ %d\n", rel, rhs);
             acb0 = r_cb0;
             acb1 = r_cb1;
             break;
         case(SAT_INPUT):
         default: 
-            printf("%d INPUT\n", rel);
+            //printf("%d INPUT\n", rel);
             acb0 = d0;
             acb1 = d1;
             break;
     }
 
-    printf("rel %d - acb0 = %d, acb1 = %d\n",rel ,acb0,acb1);
+    //printf("rel %d - acb0 = %d, acb1 = %d\n",rel ,acb0,acb1);
     imp_mat -> domain_0[rel] = acb0;
     imp_mat -> domain_1[rel] = acb1;
 
@@ -276,7 +276,6 @@ t_sat_bool sat_solve(
     }
 
     while(worklist -> length > 0) {
-        printf("\n");
 
         sat_var_idx * v = queue_dequeue(worklist);
         sat_var_idx relation = v[0];
@@ -287,7 +286,6 @@ t_sat_bool sat_solve(
             {
                 // Fail
                 free(worklist);
-                printf("Failed on variable %d\n",relation);
                 return SAT_FALSE;
             }
             else
@@ -298,8 +296,6 @@ t_sat_bool sat_solve(
 
                     if(imp_mat -> lhs[i] == relation ||
                        imp_mat -> rhs[i] == relation) {
-                        
-                        printf("Adding %d\n", i);
 
                         sat_var_idx * vid = calloc(1, sizeof(sat_var_idx));
                         vid[0] = i;

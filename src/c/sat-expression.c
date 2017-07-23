@@ -520,17 +520,17 @@ t_sat_bool sat_check_expectations(
 ){
     
     if(!var -> check_domain) return SAT_TRUE;
-    printf("Expected {%d %d} for %s (%d), got {%d %d}\n",
-        var -> expect_0,
-        var -> expect_1,
-        var -> name,
-        var -> uid,
-        sat_value_in_domain(matrix,var->uid,SAT_FALSE),
-        sat_value_in_domain(matrix,var->uid,SAT_TRUE )
-    );
     if( (var -> expect_0 != sat_value_in_domain(matrix,var->uid,SAT_FALSE)) ||
         (var -> expect_1 != sat_value_in_domain(matrix,var->uid,SAT_TRUE ))  )
     {
+        printf("Expected {%d %d} for %s (%d), got {%d %d}\n",
+            var -> expect_0,
+            var -> expect_1,
+            var -> name,
+            var -> uid,
+            sat_value_in_domain(matrix,var->uid,SAT_FALSE),
+            sat_value_in_domain(matrix,var->uid,SAT_TRUE )
+        );
         return SAT_FALSE;
     }
     return SAT_TRUE;
