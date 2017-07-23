@@ -380,6 +380,7 @@ void sat_add_expression_to_imp_matrix(
     
     if(toadd -> node_type == SAT_EXPRESSION_LEAF) {
         // Handle a Leaf expression
+        sat_apply_unary_constraints(matrix, toadd -> node.leaf_variable);
         return;
     }
 
@@ -388,6 +389,12 @@ void sat_add_expression_to_imp_matrix(
         // We need to handle a UNARY operation.
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.unary_operands.rhs);
+        
+        sat_add_relation(matrix,
+                         toadd -> ir -> uid,
+                         toadd -> node.unary_operands.rhs -> ir -> uid,
+                         SAT_NAND,
+                         toadd -> node.unary_operands.rhs -> ir -> uid);
 
 
     } else if (toadd -> op_type == SAT_OP_AND) {
@@ -397,7 +404,12 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
-
+        
+        sat_add_relation(matrix,
+                         toadd -> ir -> uid,
+                         toadd -> node.binary_operands.lhs -> ir -> uid,
+                         SAT_AND,
+                         toadd -> node.binary_operands.rhs -> ir -> uid);
 
     } else if (toadd -> op_type == SAT_OP_OR) {
 
@@ -406,7 +418,12 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
-    
+        
+        sat_add_relation(matrix,
+                         toadd -> ir -> uid,
+                         toadd -> node.binary_operands.lhs -> ir -> uid,
+                         SAT_OR,
+                         toadd -> node.binary_operands.rhs -> ir -> uid);
 
     } else if (toadd -> op_type == SAT_OP_XOR) {
 
@@ -415,7 +432,12 @@ void sat_add_expression_to_imp_matrix(
                                          toadd -> node.binary_operands.rhs);
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
-    
+        
+        sat_add_relation(matrix,
+                         toadd -> ir -> uid,
+                         toadd -> node.binary_operands.lhs -> ir -> uid,
+                         SAT_XOR,
+                         toadd -> node.binary_operands.rhs -> ir -> uid);
 
     } else if (toadd -> op_type == SAT_OP_EQ) {
 
@@ -425,7 +447,11 @@ void sat_add_expression_to_imp_matrix(
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
                                          toadd -> node.binary_operands.lhs);
     
-
+        sat_add_relation(matrix,
+                         toadd -> ir -> uid,
+                         toadd -> node.binary_operands.lhs -> ir -> uid,
+                         SAT_NXOR,
+                         toadd -> node.binary_operands.rhs -> ir -> uid);
     } else {
         
         // Whaa?
@@ -445,7 +471,7 @@ void sat_apply_unary_constraints(
     sat_imp_matrix          * matrix,
     sat_expression_variable * var
 ){
-
+    sat_set_domain(matrix, var -> uid, var -> can_be_0, var -> can_be_1);
 }
 
 
@@ -466,7 +492,6 @@ void sat_add_assignment_to_imp_matrix(
 
     sat_apply_unary_constraints(matrix,toadd -> variable);
 
-    // First add the expression associated with the assignment.
     sat_add_expression_to_imp_matrix(0,matrix, toadd -> expression);
 }
 
