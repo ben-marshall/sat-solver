@@ -1,0 +1,10 @@
+
+a2 = b2 | c2
+
+c2 == 0
+
+expect domain a2 == {0 1 }
+expect domain b2 == {0 1}
+expect domain c2 == {0  }
+
+end

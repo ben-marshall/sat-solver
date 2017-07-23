@@ -140,11 +140,7 @@ run-test: $(BIN_FILE)
 	$(BIN_FILE) $(TEST)
 
 clean-tests:
-	rm -rf ./build/test_vectors
 	rm -rf ./build/test_logs
 
-test-vectors:
-	./bin/test-harness.py
-
-run-tests: test-vectors
+run-regression: $(BIN_FILE)
 	./bin/run-tests.sh

@@ -147,11 +147,8 @@ int main (int argc, char ** argv)
     
     printf("[DONE]\n");
 
-    t_sat_bool is_consistant;
-
     if(! result -> is_consistant) {
         printf("Error: Matrix not consistant.\n");
-        is_consistant = SAT_FALSE;
 
         sat_expression_variable * var_a = 
                       sat_get_variable_from_id(result -> first_failed_implyer);
@@ -166,7 +163,6 @@ int main (int argc, char ** argv)
 
     } else {
         printf("Matrix is consistant!\n");
-        is_consistant = SAT_TRUE;
     }
     free(result);
     
@@ -181,11 +177,17 @@ int main (int argc, char ** argv)
     printf("SAT Solve Result: %d\n", sat_result);
 
     sat_var_idx i = 0;
+    t_sat_bool  expectations_met = SAT_TRUE;
+
     for(i = 0; i < imp_matrix -> variable_count; i ++) {
+        
         sat_expression_variable * v = sat_get_variable_from_id(i);
-        sat_check_expectations(v,imp_matrix,SAT_TRUE);
+        expectations_met = expectations_met &&
+                           sat_check_expectations(v,imp_matrix,SAT_TRUE);
+
         printf("%d - { %d %d } - %s\n",i, imp_matrix->d_0[i],
             imp_matrix->d_1[i], v -> name);
+
     }
     
     gettimeofday(&timstr,NULL);
@@ -218,7 +220,7 @@ int main (int argc, char ** argv)
     // Free the expression variable list.
     sat_free_expression_variable(yy_sat_variables,1);
     
-    if(is_consistant) {
+    if(expectations_met) {
         return 0;
     } else {
         return 1;
