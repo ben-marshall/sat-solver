@@ -405,6 +405,7 @@ void sat_add_expression_to_imp_matrix(
                toadd -> op_type == SAT_NAND ||
                toadd -> op_type == SAT_OR   ||
                toadd -> op_type == SAT_NOR  ||
+               toadd -> op_type == SAT_XOR  ||
                toadd -> op_type == SAT_NXOR ||
                toadd -> op_type == SAT_AND  ){
 
