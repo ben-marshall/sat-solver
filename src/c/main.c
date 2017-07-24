@@ -62,8 +62,13 @@ int main (int argc, char ** argv)
     }
 
     // Run the parser.
-    yyparse();
-    printf("[DONE]\n");
+    if(yyparse()) {
+        printf("Syntax Error\n");
+        yylex_destroy();
+        return 1;
+    } else {
+        printf("[DONE]\n");
+    }
 
     // We are finished with the input now.
     fclose(yyin);
