@@ -13,12 +13,21 @@ FINAL_RESULT=0
 function run_test {
 
     $BINARY $1 > $OUTPUT_LOGS/$TEST
-
     RESULT=$?
 
     if [ "$RESULT" = "0" ]; then
         
         echo "[PASS] $1"
+
+        valgrind -q $BINARY $1 > $OUTPUT_LOGS/vg-$TEST
+        VG_RESULT=$?
+        
+        if [ "$RESULT" = "0" ]; then
+            echo "[PASS] $1 memcheck"
+        else
+            echo "[FAIL] $1 memcheck."
+            FINAL_RESULT=1
+        fi
 
     else
 
