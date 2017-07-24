@@ -47,7 +47,7 @@ CC=gcc
 CFLAGS+=-Wall $(INC_DIRS)
 
 # The default test file to run when using the 'run-test' target.
-TEST=tests/000-simple.txt
+TEST=tests/and.txt
 
 #-----------------------------------------------------------------------------
 
