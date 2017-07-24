@@ -102,11 +102,11 @@ Where op can be any member of sat_binary_op.
 
 Setting op as a unary operation (SAT_IMP) simply means that the value of
 lhs is ignored.
-@param in imp_mat - The matrix to operate on.
-@param in assignee - The variable being assigned to
-@param in lhs - The left hand side of the operation.
-@param in op - Infix operation to perform on lhs, rhs.
-@param in rhs - The right hand side of the operation.
+@param [inout] imp_mat - The matrix to operate on.
+@param [in] assignee - The variable being assigned to
+@param [in] lhs - The left hand side of the operation.
+@param [in] op - Infix operation to perform on lhs, rhs.
+@param [in] rhs - The right hand side of the operation.
 @returns void
 */
 void sat_add_relation (
@@ -121,8 +121,8 @@ void sat_add_relation (
 /*!
 @brief Sets a variable up as an input to the system.
 @details This has implications on how constraints are propagated later on.
-@param in imp_mat - The matrix to operate on.
-@param in variable - The variable to mark as an input.
+@param [inout] imp_mat - The matrix to operate on.
+@param [in] variable - The variable to mark as an input.
 @returns void
 */
 void sat_set_as_input(
@@ -133,8 +133,8 @@ void sat_set_as_input(
 
 /*!
 @brief Return true iff the supplied variable is an input to the system.
-@param in imp_mat - The matrix to operate on.
-@param in variable - The variable to check.
+@param [in] imp_mat - The matrix to operate on.
+@param [in] variable - The variable to check.
 @returns SAT_TRUE if the variable is an input to the system.
 */
 t_sat_bool sat_is_input(
@@ -147,10 +147,10 @@ t_sat_bool sat_is_input(
 /*!
 @brief Set the domain for a particular variable.
 @details Sets which values a variable may take. Used to apply unary constraints
-@param in imp_mat - The matrix to operate on.
-@param in variable - The variable who's domain we are updating.
-@param in can_be_0 - can the varible take the value False?
-@param in can_be_1 - can the varible take the value True?
+@param [inout] imp_mat - The matrix to operate on.
+@param [in] variable - The variable who's domain we are updating.
+@param [in] can_be_0 - can the varible take the value False?
+@param [in] can_be_1 - can the varible take the value True?
 @returns
 */
 void sat_set_domain(
@@ -163,8 +163,8 @@ void sat_set_domain(
 
 /*!
 @brief Get the domain for a particular variable.
-@param in imp_mat - The matrix to operate on.
-@param in variable - The variable who's domain we are updating.
+@param [in] imp_mat - The matrix to operate on.
+@param [in] variable - The variable who's domain we are updating.
 @returns True if the suppled value is in the domain of the variable.
 */
 t_sat_bool sat_value_in_domain(
@@ -175,8 +175,8 @@ t_sat_bool sat_value_in_domain(
 
 /*!
 @brief Check the domain for a particular variable is empty.
-@param in imp_mat - The matrix to operate on.
-@param in variable - The variable who's domain we are querying.
+@param [in] imp_mat - The matrix to operate on.
+@param [in] variable - The variable who's domain we are querying.
 @returns True if the variable has an empty domain.
 */
 t_sat_bool sat_domain_empty(
@@ -187,7 +187,7 @@ t_sat_bool sat_domain_empty(
 
 /*!
 @brief Solve the constraint problem represented by the supplied matrix.
-@param in imp_mat - The matrix to operate on.
+@param [inout] imp_mat - The matrix to operate on.
 @returns True if the system is solvable.
 */
 t_sat_bool sat_solve(

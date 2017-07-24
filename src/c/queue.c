@@ -31,7 +31,7 @@ queue * queue_new()
 
 /*!
 @brief Free the memory allocated for a queue.
-@param in tofree - The queue to free.
+@param [in] tofree - The queue to free.
 @details Does not free the data in the queue. Only the queue metadata.
 */
 void queue_free(
@@ -49,8 +49,8 @@ void queue_free(
 
 /*!
 @brief Free the memory allocated for a queue.
-@param in q - The queue to append to.
-@param in toadd - The item to add to the queue.
+@param [in] q - The queue to append to.
+@param [in] toadd - The item to add to the queue.
 */
 void queue_enqueue(
     queue * q,
@@ -72,7 +72,7 @@ void queue_enqueue(
 
 /*!
 @brief Return the item at the front of a queue or NULL.
-@param in q - The queue to remove things from.
+@param [in] q - The queue to remove things from.
 */
 void * queue_dequeue(
     queue * q
