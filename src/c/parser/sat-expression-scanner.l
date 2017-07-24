@@ -66,7 +66,7 @@ CP       \}
 }
 {ID} {
     size_t text_len = strlen(yytext);
-    yylval.vid = calloc(text_len, sizeof(char));
+    yylval.vid = calloc(text_len+1, sizeof(char));
     memcpy(yylval.vid, yytext,text_len);
     return TOK_ID;
 }

@@ -87,6 +87,9 @@ sat_expression_variable * sat_new_named_expression_variable(
 
         if(result == 0) {
             
+            free(walker -> name);
+            walker -> name = name;
+
             return walker;
 
         } else if (walker -> next == NULL)  {
