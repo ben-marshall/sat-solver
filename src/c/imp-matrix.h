@@ -31,7 +31,9 @@ typedef enum e_sat_binary_op {
     SAT_AND=5,
     SAT_NAND=6,
     SAT_EQ=7,
-    SAT_IMP=8         //!< Implies
+    SAT_IMP=8,        //!< Implies
+    SAT_NOT=9,
+    SAT_NOP=10          //!< No-op
 } sat_binary_op;
 
 //  ------------------ Data Structures -----------------------------------

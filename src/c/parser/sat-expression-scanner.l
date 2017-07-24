@@ -23,12 +23,16 @@ ASSIGN   =
 ZERO     0
 ONE      1
 
+OP_OR    \|
+OP_NOR   ~\|
+OP_XOR   \^
+OP_NXOR  ~\^
 OP_NE    !=
 OP_EQ    ==
 OP_AND   &
-OP_OR    \|
+OP_NAND  ~&
 OP_NOT   ~
-OP_XOR   \^
+OP_IMP   ->
 
 OB       \(
 CB       \)
@@ -79,29 +83,16 @@ CP       \}
     return TOK_CB;
 }
 
-{OP_NE} {
-    return TOK_OP_NE;
-}
-
-{OP_EQ} {
-    return TOK_OP_EQ;
-}
-
-{OP_AND} {
-    return TOK_OP_AND;
-}
-
-{OP_OR} {
-    return TOK_OP_OR;
-}
-
-{OP_NOT} {
-    return TOK_OP_NOT;
-}
-
-{OP_XOR} {
-    return TOK_OP_XOR;
-}
+{OP_OR} {    return TOK_OP_OR;}
+{OP_NOR} {   return TOK_OP_NOR;}
+{OP_XOR} {    return TOK_OP_XOR;}
+{OP_NXOR} {   return TOK_OP_NXOR;}
+{OP_NE} {    return TOK_OP_NE;}
+{OP_EQ} {    return TOK_OP_EQ;}
+{OP_AND} {    return TOK_OP_AND;}
+{OP_NAND} {    return TOK_OP_NAND;}
+{OP_NOT} {    return TOK_OP_NOT;}
+{OP_IMP} {    return TOK_OP_IMP;}
 
 {ASSIGN} {
     return TOK_ASSIGN;

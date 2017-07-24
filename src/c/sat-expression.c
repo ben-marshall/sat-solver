@@ -203,7 +203,7 @@ void sat_free_expression_node(
 
     } else if (tofree -> node_type == SAT_EXPRESSION_NODE) {
 
-        if(tofree -> op_type == SAT_OP_NOT) {
+        if(tofree -> op_type == SAT_NOT) {
 
             sat_free_expression_node(tofree -> node.unary_operands.rhs);
 
@@ -241,7 +241,7 @@ sat_expression_node * sat_new_leaf_expression_node (
     }
     else
     {
-        tr -> op_type            = SAT_OP_NONE;
+        tr -> op_type            = SAT_NOP;
         tr -> node.leaf_variable = variable;
         return tr;
     }
@@ -258,9 +258,9 @@ memory allocation fails.
 */
 sat_expression_node * sat_new_unary_expression_node (
     sat_expression_node * child,
-    sat_operation         op_type
+    sat_binary_op         op_type
 ) {
-    assert(op_type == SAT_OP_NOT);
+    assert(op_type == SAT_NOT);
     assert(child   != NULL);
 
     sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE,
@@ -291,13 +291,16 @@ memory allocation fails.
 sat_expression_node * sat_new_binary_expression_node (
     sat_expression_node * lhs,
     sat_expression_node * rhs,
-    sat_operation         op_type
+    sat_binary_op         op_type
 ) {
     assert(rhs != NULL);
     assert(lhs != NULL);
-    assert(op_type == SAT_OP_AND ||
-           op_type == SAT_OP_OR  ||
-           op_type == SAT_OP_XOR );
+    assert(op_type == SAT_AND ||
+           op_type == SAT_OR  ||
+           op_type == SAT_NOR ||
+           op_type == SAT_NAND||
+           op_type == SAT_NXOR||
+           op_type == SAT_XOR );
 
     sat_expression_node * tr = sat_new_expression_node(SAT_EXPRESSION_NODE,
                                                        NULL);
@@ -385,7 +388,7 @@ void sat_add_expression_to_imp_matrix(
         return;
     }
 
-    else if(toadd -> op_type == SAT_OP_NOT) {
+    else if(toadd -> op_type == SAT_NOT) {
 
         // We need to handle a UNARY operation.
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
@@ -398,7 +401,12 @@ void sat_add_expression_to_imp_matrix(
                          toadd -> node.unary_operands.rhs -> ir -> uid);
 
 
-    } else if (toadd -> op_type == SAT_OP_AND) {
+    } else if (toadd -> op_type == SAT_AND  ||
+               toadd -> op_type == SAT_NAND ||
+               toadd -> op_type == SAT_OR   ||
+               toadd -> op_type == SAT_NOR  ||
+               toadd -> op_type == SAT_NXOR ||
+               toadd -> op_type == SAT_AND  ){
 
         // Binary AND OP.
         sat_add_expression_to_imp_matrix(depth+1,matrix, 
@@ -409,49 +417,7 @@ void sat_add_expression_to_imp_matrix(
         sat_add_relation(matrix,
                          toadd -> ir -> uid,
                          toadd -> node.binary_operands.lhs -> ir -> uid,
-                         SAT_AND,
-                         toadd -> node.binary_operands.rhs -> ir -> uid);
-
-    } else if (toadd -> op_type == SAT_OP_OR) {
-
-        // Binary OR OP.
-        sat_add_expression_to_imp_matrix(depth+1,matrix, 
-                                         toadd -> node.binary_operands.rhs);
-        sat_add_expression_to_imp_matrix(depth+1,matrix, 
-                                         toadd -> node.binary_operands.lhs);
-        
-        sat_add_relation(matrix,
-                         toadd -> ir -> uid,
-                         toadd -> node.binary_operands.lhs -> ir -> uid,
-                         SAT_OR,
-                         toadd -> node.binary_operands.rhs -> ir -> uid);
-
-    } else if (toadd -> op_type == SAT_OP_XOR) {
-
-        // Binary XOR OP.
-        sat_add_expression_to_imp_matrix(depth+1,matrix, 
-                                         toadd -> node.binary_operands.rhs);
-        sat_add_expression_to_imp_matrix(depth+1,matrix, 
-                                         toadd -> node.binary_operands.lhs);
-        
-        sat_add_relation(matrix,
-                         toadd -> ir -> uid,
-                         toadd -> node.binary_operands.lhs -> ir -> uid,
-                         SAT_XOR,
-                         toadd -> node.binary_operands.rhs -> ir -> uid);
-
-    } else if (toadd -> op_type == SAT_OP_EQ) {
-
-        // Binary NXOR OP.
-        sat_add_expression_to_imp_matrix(depth+1,matrix, 
-                                         toadd -> node.binary_operands.rhs);
-        sat_add_expression_to_imp_matrix(depth+1,matrix, 
-                                         toadd -> node.binary_operands.lhs);
-    
-        sat_add_relation(matrix,
-                         toadd -> ir -> uid,
-                         toadd -> node.binary_operands.lhs -> ir -> uid,
-                         SAT_NXOR,
+                         toadd -> op_type,
                          toadd -> node.binary_operands.rhs -> ir -> uid);
     } else {
         

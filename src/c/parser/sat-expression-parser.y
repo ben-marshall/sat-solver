@@ -24,12 +24,18 @@ extern sat_assignment * yy_assignments;
 %token <vid> TOK_ID     
 %token TOK_END    
 %token TOK_ASSIGN 
+
+%token TOK_OP_OR  
+%token TOK_OP_NOR  
+%token TOK_OP_XOR 
+%token TOK_OP_NXOR 
 %token TOK_OP_NE  
 %token TOK_OP_EQ  
 %token TOK_OP_AND 
-%token TOK_OP_OR  
-%token TOK_OP_XOR 
+%token TOK_OP_NAND 
 %token TOK_OP_NOT 
+%token TOK_OP_IMP 
+
 %token TOK_OB     
 %token TOK_CB     
 %token TOK_OP     
@@ -37,9 +43,10 @@ extern sat_assignment * yy_assignments;
 %token TOK_EXPECT 
 %token TOK_DOMAIN 
 
-%left  TOK_OP_OR
-%left  TOK_OP_AND 
-%left  TOK_OP_XOR
+%left  TOK_OP_IMP
+%left  TOK_OP_OR   TOK_OP_NOR
+%left  TOK_OP_AND  TOK_OP_NAND
+%left  TOK_OP_XOR  TOK_OP_NXOR TOK_OP_EQ TOK_OP_NE
 %right TOK_NOT
 %left  TOK_OB
 
@@ -101,22 +108,31 @@ expression :
 
 expression_binary : 
     expression TOK_OP_AND expression{
-    $$ = sat_new_binary_expression_node($1,$3,SAT_OP_AND);
+    $$ = sat_new_binary_expression_node($1,$3,SAT_AND);
+    }
+|   expression TOK_OP_NAND expression{
+    $$ = sat_new_binary_expression_node($1,$3,SAT_NAND);
     }
 |  expression TOK_OP_OR  expression{
-    $$ = sat_new_binary_expression_node($1,$3,SAT_OP_OR );
+    $$ = sat_new_binary_expression_node($1,$3,SAT_OR );
+    }
+|  expression TOK_OP_NOR  expression{
+    $$ = sat_new_binary_expression_node($1,$3,SAT_NOR);
     }
 |  expression TOK_OP_XOR expression{
-    $$ = sat_new_binary_expression_node($1,$3,SAT_OP_XOR);
+    $$ = sat_new_binary_expression_node($1,$3,SAT_XOR);
     }
-|  expression TOK_OP_EQ  expression{
-    $$ = sat_new_binary_expression_node($1,$3,SAT_OP_EQ );
+|  expression TOK_OP_NXOR expression{
+    $$ = sat_new_binary_expression_node($1,$3,SAT_NXOR);
+    }
+|  expression TOK_OP_IMP expression{
+    $$ = sat_new_binary_expression_node($1,$3,SAT_IMP );
     }
 ;
 
 expression_unary :
     TOK_OP_NOT expression {
-    $$ = sat_new_unary_expression_node($2, SAT_OP_NOT); 
+    $$ = sat_new_unary_expression_node($2, SAT_NOT); 
     }
 ;
 

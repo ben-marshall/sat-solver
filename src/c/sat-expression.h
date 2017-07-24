@@ -5,16 +5,6 @@
 #ifndef H_SATEXPRESSION
 #define H_SATEXPRESSION
 
-//! @brief Describes a type of operation on binary variables.
-typedef enum t_sat_operation{
-    SAT_OP_AND,
-    SAT_OP_OR,
-    SAT_OP_XOR,
-    SAT_OP_EQ,
-    SAT_OP_NOT,
-    SAT_OP_NONE = 0  //!< No SAT operation.
-} sat_operation;
-
 
 //! @brief Describes whether a sat expression AST node is a leaf or subnode.
 typedef enum t_sat_expression_node_type {
@@ -112,7 +102,7 @@ void sat_free_expression_variable (
 typedef struct t_sat_expression_node sat_expression_node;
 struct t_sat_expression_node {
     sat_expression_node_type    node_type; //!< Is this a node or a leaf?
-    sat_operation               op_type;   //!< Which operation is the node?
+    sat_binary_op               op_type;   //!< Which operation is the node?
     sat_expression_variable  *  ir; //<! Intermediate result.
 
     /*!
@@ -174,7 +164,7 @@ memory allocation fails.
 */
 sat_expression_node * sat_new_unary_expression_node (
     sat_expression_node * child,
-    sat_operation         op_type
+    sat_binary_op         op_type
 );
 
 
@@ -189,7 +179,7 @@ memory allocation fails.
 sat_expression_node * sat_new_binary_expression_node (
     sat_expression_node * lhs,
     sat_expression_node * rhs,
-    sat_operation         op_type
+    sat_binary_op         op_type
 );
 
 //! Typedef for representing a single assignment to a single variable.
