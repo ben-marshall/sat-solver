@@ -9,6 +9,15 @@
 #ifndef H_IMP_MATRIX
 #define H_IMP_MATRIX
 
+/*!
+@defgroup gr-solver Solver
+
+@brief Functions and data structures used to implement the AC-3 algorithm.
+
+@addtogroup gr-solver
+@{
+*/
+
 //  ------------------ Type Definitions ----------------------------------
 
 
@@ -194,5 +203,6 @@ t_sat_bool sat_solve(
     sat_imp_matrix * imp_mat
 );
 
+/*! @} */
 
 #endif

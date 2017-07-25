@@ -5,6 +5,15 @@
 #ifndef H_SATEXPRESSION
 #define H_SATEXPRESSION
 
+/*!
+@defgroup gr-expressions Expression Tree Representation
+
+@brief Functions and data structures used to represent boolean expressions.
+
+@addtogroup gr-expressions
+@{
+*/
+
 
 //! @brief Describes whether a sat expression AST node is a leaf or subnode.
 typedef enum t_sat_expression_node_type {
@@ -213,7 +222,6 @@ Can also free the pointed to <next> sat_assignment member.
 @param [in] tofree - pointer to the assignmen to be free'd.
 @param [in] freelist - Should we also recursively free the *next item in the
 linked list?
-@todo Implement this.
 */
 void sat_free_assignment(
     sat_assignment * tofree,
@@ -254,6 +262,8 @@ t_sat_bool sat_check_expectations(
     sat_imp_matrix          * matrix,
     t_sat_bool                print_failures
 );
+
+/*! @} */
 
 #endif
 

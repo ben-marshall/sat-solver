@@ -452,7 +452,6 @@ void sat_apply_unary_constraints(
 matrix.
 @param [in]out matrix - The matrix to add the assignment to
 @param [in]    toadd  - The assignment to add to the matrix.
-@todo Finish implementing this.
 */
 void sat_add_assignment_to_imp_matrix(
     sat_imp_matrix * matrix,

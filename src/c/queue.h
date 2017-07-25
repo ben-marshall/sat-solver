@@ -5,6 +5,20 @@
 #define QUEUE_H
 
 
+/*!
+@defgroup gr-queue Queue Data Structure
+
+@brief A simple generic queue structure.
+
+@details This is a very simple queue data structure where any item can
+be appended to the end and popped from the front.
+
+Works on `void *` data types (so basically anything) and care must be taken
+to always cast the correct type when de-queuing an item.
+
+@addtogroup gr-queue
+@{
+*/
 
 /*!
 @brief A single item in the queue.
@@ -36,6 +50,9 @@ queue * queue_new();
 /*!
 @brief Free the memory allocated for a queue.
 @param [in] tofree - The queue to free.
+@warning This function only frees the memory allocated to maintain the
+queue data structure. It does not free items pointed to by the queue. Freeing
+a queue which is not empty is likely to result in memory leaks.
 */
 void queue_free(
     queue * tofree
@@ -61,4 +78,7 @@ void * queue_dequeue(
     queue * q
 );
 
+/*! @} */
+
 #endif
+
