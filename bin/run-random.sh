@@ -20,7 +20,7 @@ function run_test {
         echo "[PASS] $1"
 
          valgrind  --error-exitcode=1 \
-            $BINARY $1 &> $OUTPUT_LOGS/$TEST
+            $BINARY $1 &> $OUTPUT_LOGS/vg-$TEST
 
         VG_RESULT=$?
         

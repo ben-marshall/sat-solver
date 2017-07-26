@@ -60,7 +60,7 @@ class TestCase(object):
         """
         self.num_variables = random.randrange(self.min_variables,
                                               self.max_variables)
-        self.max_constraints = int(max(1,self.num_variables / 2))
+        self.max_constraints = int(max(1,self.num_variables / 10))
         self.max_expectations = int(self.num_variables / 2)
 
         self.num_constraints = random.randrange(self.min_constraints,
@@ -80,7 +80,16 @@ class TestCase(object):
 
             ass = self.gen_assignment(assignee, varset)
             self.assignments.add(ass)
+        
+        for i in range(0,self.num_constraints):
+            
+            var = random.sample(self.variables,1)[0]
 
+            con = "%s == %d" % (
+                var,
+                random.randint(0,1)
+            )
+            self.constraints.add(con)
 
 
     def writeToFile(self, path):
@@ -91,6 +100,11 @@ class TestCase(object):
         with open(path,"w") as fh:
             for a in self.assignments:
                 fh.write("%s\n" % a)
+
+            fh.write("\n")
+
+            for c in self.constraints:
+                fh.write("%s\n" % c)
 
             fh.write("\nend\n\n")
         
