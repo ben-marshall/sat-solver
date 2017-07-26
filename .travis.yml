@@ -19,10 +19,12 @@ install:
 
 before_script:
  - make setup
+ - make gen-random-tests
 
 script:
  - make
  - make run-regression
+ - make run-random-tests
 
 after_success:
  - echo "Success"
