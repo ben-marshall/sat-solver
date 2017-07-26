@@ -83,7 +83,7 @@ class TestCase(object):
         
         for i in range(0,self.num_constraints):
             
-            var = random.sample(self.variables,1)[0]
+            var = random.sample(self.unassigned_variables,1)[0]
 
             con = "%s == %d" % (
                 var,

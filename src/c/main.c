@@ -101,12 +101,28 @@ int main (int argc, char ** argv)
     t_sat_bool met_expectations = SAT_TRUE;
     sat_var_idx vi;
 
+    unsigned int empty_variables = 0;
+    unsigned int unsat_variables = 0;
+
     for(vi = 0; vi < variable_count; vi ++)
     {
         sat_expression_variable * var = sat_get_variable_from_id(vi);
         met_expectations &= sat_check_expectations(var,imp_matrix,SAT_TRUE);
+
+        if(sat_value_in_domain(imp_matrix, vi, SAT_TRUE)) {
+            // Do Nothing
+        } else {
+            printf("%s Cannot be satisfied.\n", var -> name);
+            unsat_variables += 1;
+
+            if(sat_value_in_domain(imp_matrix, vi, SAT_FALSE) == SAT_FALSE){
+                empty_variables += 1;
+            }
+        }
     }
     
+    printf("Unsatisfiable Variables:     %d\n", unsat_variables);
+    printf("Variables with empty domain: %d\n", empty_variables);
 
 
     // ---- End of program. Clean up. --------
