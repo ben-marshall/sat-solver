@@ -144,3 +144,9 @@ clean-tests:
 
 run-regression: $(BIN_FILE)
 	./bin/run-tests.sh
+
+gen-random-tests:
+	./bin/test-gen.py
+
+run-random-tests:
+	./bin/run-random.sh

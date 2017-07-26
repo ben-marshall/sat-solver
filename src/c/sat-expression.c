@@ -29,7 +29,7 @@ expression variable name.
 */
 char * sat_expression_var_id_to_name(unsigned int id) {
     
-    size_t len = 3 + (int)(ceil(log10(id))+1);
+    size_t len = 3 + (int)(ceil(log10(id))+2);
 
     char * tr = calloc(len, sizeof(char));
     
