@@ -131,8 +131,6 @@ $(BIN_FILE) : $(OBJ_FILES)
 
 docs:
 	doxygen doxyfile
-	mkdocs build --clean --site-dir ./build/docs
-
 
 #-----------------------------------------------------------------------------
 
