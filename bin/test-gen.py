@@ -8,113 +8,116 @@ import time
 
 operators = ["&","|","^","~&","~|","~^"]
 
-class TestCase(object):
+class TestVariable(object):
     
-    def __init__(self, seed):
+    def __init__(self, name,
+                       is_input = False,
+                       is_output = False):
+        """
+        Create a new variable with the given string name.
+        """
+        assert ((is_input and is_output) == False)
+
+        self.name = name
+        
+        self.force_0 = False
+        self.force_1 = False
+
+        if(is_input):
+            self.force_0 = random.sample([True,False],1)[0]
+            self.force_1 = random.sample([True,False],1)[0]
+
+    def get_constraints():
+        """
+        Return the constraints on the value as a string.
+        """
+        tr = ""
+        if(self.force_0== False):
+            tr += "%s == 0\n" % self.name
+        if(self.force_1== False):
+            tr += "%s == 1\n" % self.name
+        return tr
+
+
+class TestCase(object):
+    """
+    A class for generating input test cases to the SAT solver
+    """
+    
+    def __init__(self, seed, 
+                       iao_ratios=[1,1,1], 
+                       min_variables = 10,
+                       max_variables = 100):
         """
         Generates a new test case with a given seed.
         """
         self.seed = seed
         random.seed(a = self.seed) 
 
-        self.num_variables = None
-        self.num_constraints = None
-        self.num_expectations = None
-
-        self.min_variables = 4
-        self.max_variables = 1000
-
-        self.min_constraints = 0
-        self.max_constraints = int(self.max_variables / 2)
+        self.iao_ratios    = iao_ratios
+        self.min_variables = min_variables
+        self.max_variables = max_variables
         
-        self.min_expectations = 0
-        self.max_expectations = 100000
+        # Never get assigned to
+        self.input_variables = set([])
 
-        self.unassigned_variables = set([])
-        self.variables = set([])
-        self.assignments= set([])
-        self.expressions = set([])
-        self.expectations = set([])
-        self.constraints = set([])
+        # Are assigned to, and can be used in other expressions
+        self.assign_variables= set([])
 
-    def gen_assignment(self, assignee, variables):
+        # Are assigned to but are never used
+        self.output_variables= set([])
+
+        self.__gen_variables__()
+
+
+    def __gen_variables__(self):
         """
-        Generate an assignment expression using the supplied variables.
+        Generates the set of variables for the test case according to
+        the ratios in self.iao_ratios
         """
-        ass = "%s = " % assignee
-        
-        first = True
+        ratio_set = []
+        ratio_set += ["i" for i in range(0,self.iao_ratios[0])]
+        ratio_set += ["a" for i in range(0,self.iao_ratios[1])]
+        ratio_set += ["o" for i in range(0,self.iao_ratios[2])]
 
-        for i in variables:
-            if(first) :
-                ass += "%s" % i
-                first=False
-            else:
-                ass += " %s %s " % (random.sample(operators,1)[0], i)
-        
-        return ass
+        num_vars = random.randint(self.min_variables, self.max_variables)
 
-    def generate(self):
-        """
-        Create the new test case
-        """
-        self.num_variables = random.randrange(self.min_variables,
-                                              self.max_variables)
-        self.max_constraints = int(max(1,self.num_variables / 10))
-        self.max_expectations = int(self.num_variables / 2)
+        for i in range(0, num_vars):
 
-        self.num_constraints = random.randrange(self.min_constraints,
-                                                self.max_constraints)
-        self.num_expectations= random.randrange(self.min_expectations,
-                                                self.max_expectations)
+            vt = random.sample(ratio_set,1)[0]
 
-        for i in range(0, self.num_variables):
-            self.variables.add(hex(i)[1:])
-            self.unassigned_variables.add(hex(i)[1:])
+            name = "%s_%d" % (vt,i)
+            v = TestVariable(name, is_input = (vt=="i"),is_output=(vt=="o"))
 
-        for i in range(0, int(self.num_variables/3*2)):
-            varcount    = random.randint(1, min(10,len(self.unassigned_variables)))
-            assignee    = random.sample(self.unassigned_variables,1)[0]
-            self.unassigned_variables.remove(assignee)
-            varset      = random.sample(self.variables, varcount)
-
-            ass = self.gen_assignment(assignee, varset)
-            self.assignments.add(ass)
-        
-        for i in range(0,self.num_constraints):
-            
-            var = random.sample(self.unassigned_variables,1)[0]
-
-            con = "%s == %d" % (
-                var,
-                random.randint(0,1)
-            )
-            self.constraints.add(con)
+            if(vt == "i"):
+                self.input_variables.add(v)
+            elif(vt == "a"):
+                self.assign_variables.add(v)
+            elif(vt == "o"):
+                self.output_variables.add(v)
 
 
-    def writeToFile(self, path):
-        """
-        Write the new test case to file.
-        """
 
-        with open(path,"w") as fh:
-            for a in self.assignments:
-                fh.write("%s\n" % a)
+def parse_arguments():
+    """
+    Parses all command line arguments to the program.
+    """
+    parser = argparse.ArgumentParser(description=__doc__)
+    
+    parer.add_argument("--output-dir",help="Folder to put generated files in.",
+        default="./work/test_vectors")
 
-            fh.write("\n")
+    args = parser.parse_args()
+    return args
 
-            for c in self.constraints:
-                fh.write("%s\n" % c)
-
-            fh.write("\nend\n\n")
-        
 
 def main():
     """
     Main program for the test harness.
     """
-
-    vector_folder = "./build/test_vectors"
+    
+    args = parse_arguments()
+    vector_folder = args.output_dir
 
     if(not os.path.exists(vector_folder)):
         os.mkdir(vector_folder)
