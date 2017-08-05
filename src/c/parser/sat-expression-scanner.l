@@ -43,7 +43,11 @@ DOMAIN   domain
 OP       \{
 CP       \}
 
+COMMENT  \/\/.*\n
+
 %%
+
+{COMMENT}
 
 {END}  {
     return TOK_END;
