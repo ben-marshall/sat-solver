@@ -55,7 +55,7 @@ class TestVariableAssignment(object):
         for i in range(0,len(self.exp_ops)):
             tr = tr + ("%s %s " % (self.expression[i].name,self.exp_ops[i]))
         
-        tr = tr + ("%s" % self.expression[i].name)
+        tr = tr + ("%s" % self.expression[-1].name)
 
         return tr
 
@@ -207,6 +207,9 @@ def parse_arguments():
     
     parser.add_argument("--output-dir",help="Folder to put test files in.",
         default="./build/test_vectors")
+    parser.add_argument("--max-vars",type=int,default = 1000)
+    parser.add_argument("--min-vars",type=int,default = 10)
+    parser.add_argument("--num-tests",type=int,default = 50)
 
     args = parser.parse_args()
     return args
@@ -225,13 +228,14 @@ def main():
 
     print("Creating test vectors...")
 
-    for i in range(0,50): 
+    for i in range(0,args.num_tests): 
         filename = "%s/tv_%03d.txt" % (vector_folder,i)
         
         seed = time.time()
 
         tv = TestCase(seed,
-            max_variables = 1000,
+            max_variables = args.max_vars,
+            min_variables = args.min_vars,
             iao_ratios    = [1, 5, 1])
         tv.toFile(filename)
         
