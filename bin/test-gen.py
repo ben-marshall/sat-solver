@@ -177,6 +177,7 @@ class TestCase(object):
         with open(path,"w") as fh:
             
             fh.write("\n")
+            fh.write("// Seed: %f\n\n"% self.seed)
 
             for var in self.assign_variables:
                 a = str(var.assignment)
