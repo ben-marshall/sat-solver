@@ -8,6 +8,58 @@ import time
 import argparse
 
 operators = ["&","|","^","~&","~|","~^"]
+op_weights= [ 1 , 1 , 1 , 1 , 1 , 1    ]
+
+FORCE_NONE  = 0
+FORCE_TRUE  = 1
+FORCE_FALSE = 2
+
+class TestVariableAssignment(object):
+    
+    def __init__(self, assigne, source_variables):
+        """
+        Create a new assignment expression for the assignee variable.
+        The expression can contain any of the variables in the source_variable
+        set.
+        """
+        assert (type(assigne) == TestVariable)
+        assert (len(source_variables) > 0)
+
+        self.assigne    = assigne
+        self.input_count= min(random.randint(2,10),len(source_variables))
+        self.inputs     = random.sample(source_variables,self.input_count)
+        
+        self.expression = []
+        self.exp_ops    = []
+
+        self.__gen_expression__()
+
+
+    def __gen_expression__(self):
+        """
+        Generate the expression from the input variables.
+        """
+        for i in self.inputs:
+            self.expression.append(i)
+            
+            if(len(self.expression) < len(self.inputs)):
+                self.exp_ops.append(random.sample(operators,1)[0])
+
+    def __str__(self):
+        """
+        Return a string representation of the assignment.
+        """
+        
+        tr = "%s = "  % self.assigne.name
+
+        for i in range(0,len(self.exp_ops)):
+            tr = tr + ("%s %s " % (self.expression[i].name,self.exp_ops[i]))
+        
+        tr = tr + ("%s" % self.expression[i].name)
+
+        return tr
+
+
 
 class TestVariable(object):
     
@@ -21,12 +73,13 @@ class TestVariable(object):
 
         self.name = name
         
-        self.force_0 = False
-        self.force_1 = False
+        self.force_val = FORCE_NONE
+
+        self.assignment = None
 
         if(is_input):
-            self.force_0 = random.sample([True,False],1)[0]
-            self.force_1 = random.sample([True,False],1)[0]
+            self.force_val = random.sample([FORCE_NONE,FORCE_NONE,
+                FORCE_TRUE,FORCE_FALSE],1)[0]
 
     def get_constraints():
         """
@@ -69,6 +122,10 @@ class TestCase(object):
         self.output_variables= set([])
 
         self.__gen_variables__()
+        self.__gen_assignments__()
+
+        self.all_vars = self.input_variables.union(self.output_variables,
+                                                   self.assign_variables)
 
 
     def __gen_variables__(self):
@@ -97,6 +154,49 @@ class TestCase(object):
             elif(vt == "o"):
                 self.output_variables.add(v)
 
+    def __gen_assignments__(self):
+        """
+        For all non-input variables, generate an assignment expression
+        for them.
+        """
+
+        for var in self.assign_variables:
+            var.assignment = TestVariableAssignment(var,self.input_variables)
+
+        in_and_ass = self.input_variables.union(self.assign_variables)
+
+        for var in self.output_variables:
+            var.assignment = TestVariableAssignment(var,in_and_ass)
+
+
+    def toFile(self, path):
+        """
+        Write the test case to a file.
+        """
+        
+        with open(path,"w") as fh:
+            
+            fh.write("\n")
+
+            for var in self.assign_variables:
+                a = str(var.assignment)
+                fh.write(a+"\n")
+            
+            fh.write("\n")
+
+            for var in self.output_variables:
+                a = str(var.assignment)
+                fh.write(a+"\n")
+
+            fh.write("\n")
+
+            for var in self.all_vars:
+                if(var.force_val == FORCE_TRUE):
+                    fh.write("%s == 1\n" % var.name)
+                elif(var.force_val == FORCE_FALSE):
+                    fh.write("%s == 0\n" % var.name)
+
+            fh.write("\nend")
 
 
 def parse_arguments():
@@ -105,8 +205,8 @@ def parse_arguments():
     """
     parser = argparse.ArgumentParser(description=__doc__)
     
-    parer.add_argument("--output-dir",help="Folder to put generated files in.",
-        default="./work/test_vectors")
+    parser.add_argument("--output-dir",help="Folder to put test files in.",
+        default="./build/test_vectors")
 
     args = parser.parse_args()
     return args
@@ -121,7 +221,7 @@ def main():
     vector_folder = args.output_dir
 
     if(not os.path.exists(vector_folder)):
-        os.mkdir(vector_folder)
+        os.makedirs(vector_folder)
 
     print("Creating test vectors...")
 
@@ -130,12 +230,12 @@ def main():
         
         seed = time.time()
 
-        tv = TestCase(seed)
-        tv.generate()
-        tv.writeToFile(filename)
+        tv = TestCase(seed,
+            max_variables = 1000,
+            iao_ratios    = [1, 5, 1])
+        tv.toFile(filename)
         
-        print("Test: %s, Seed: %f, Variables: %d, Assignments: %d" %
-            (filename, seed,tv.num_variables,len(tv.assignments)))
+        print("Test: %s, Seed: %f" % (filename, seed,))
     
     print("Creating test vectors... [DONE]")
 
